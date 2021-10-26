@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/drawable/rounded_chat_received_background.xml" value="0.14635416666666667" />
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/drawable/rounded_chat_sent_background.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/layout/activity_main.xml" value="0.13020833333333334" />
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/layout/chat_fragment.xml" value="0.13020833333333334" />
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/layout/received_layout.xml" value="0.13020833333333334" />
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/layout/recyclerview_single_item.xml" value="0.13020833333333334" />
