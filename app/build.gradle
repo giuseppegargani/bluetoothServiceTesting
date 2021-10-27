@@ -4,6 +4,12 @@ plugins {
 }
 
 android {
+
+    //enabled databinding
+    dataBinding {
+        enabled = true
+    }
+
     compileSdk 30
 
     defaultConfig {
