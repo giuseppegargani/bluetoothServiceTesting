@@ -71,19 +71,19 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
         headerLabelContainer.visibility = View.INVISIBLE
 
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             alreadyAskedForPermission = savedInstanceState.getBoolean(PERMISSION_REQUEST_LOCATION_KEY, false)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerViewPaired.layoutManager = LinearLayoutManager(this)
-
         recyclerView.isNestedScrollingEnabled = false
         recyclerViewPaired.isNestedScrollingEnabled = false
 
+        //CLICK LISTENERS
         findViewById<Button>(R.id.search_devices).setOnClickListener {
             findDevices()
         }
-
         findViewById<Button>(R.id.make_visible).setOnClickListener {
             makeVisible()
         }
@@ -134,7 +134,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 recyclerViewPaired.adapter = devicesAdapter
                 devicesAdapter.setItemClickListener(this)
                 headerLabelPaired.visibility = View.VISIBLE
-
             }
         }
 
