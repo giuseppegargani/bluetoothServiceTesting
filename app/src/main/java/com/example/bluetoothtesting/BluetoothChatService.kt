@@ -65,6 +65,10 @@ class BluetoothChatService(context: Context, handler: Handler){
     ma dove prende mState? è un intero che viene inizializzato a zero
     successivamente con il metodo INIT che da alcuni è considerato necessario gli viene assegnato il valore 0 STATE_NONE
     alla variabile mNewState viene assegnato il valore di mState (Puntatore di riferimento)
+
+     Si deve fare una funzione che restituisce una stringa da qualche cosa
+     ma vediamo quale si deve modificare
+
      */
     @Synchronized fun getState(): Int {
         return mState
