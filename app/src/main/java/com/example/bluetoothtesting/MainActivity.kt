@@ -23,6 +23,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
+/* RIGUARDO ALLA ARCHITETTURA GENERALE
+    in onCreate si inizializza il service bluechatService con mHandler
+    chatService è iniziata a null (all'inizio del programma)
+ */
+
 class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickListener,
     ChatFragment.CommunicationListener {
 
@@ -44,7 +49,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var connectionDot: ImageView
     private lateinit var  mConnectedDeviceName: String
     private var connected: Boolean = false
-
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var chatFragment: ChatFragment
@@ -103,7 +107,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter()
 
-        // Initialize the BluetoothChatService to perform bluetooth connections
+        /* Initialize the BluetoothChatService to perform bluetooth connections
+        Inizializza il chatService con handler!!!
+        Uno dei parametri di bluetoothChat Service è handler
+         */
         mChatService = BluetoothChatService(this, mHandler)
 
         if (mBtAdapter == null)
@@ -188,7 +195,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     }
 
     private fun findDevices() {
-
         checkPermissions()
     }
 
@@ -303,10 +309,15 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
     }
 
+    //se un elemento di recyclerView viene cliccato lancia connectDevice
     override fun itemClicked(deviceData: DeviceData) {
         connectDevice(deviceData)
     }
 
+    /*cancella discovery e lancia il servizio
+    Se clicchi lancia connectDevice con deviceData corrispondente!!
+    LANCIA IL METODO CONNECT DI mChatService!!! con la device corrispondente!!! che prende come parametro!!!
+     */
     private fun connectDevice(deviceData: DeviceData) {
 
         // Cancel discovery because it's costly and we're about to connect
@@ -323,11 +334,17 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     }
 
+    /*SE E' CONNECTED LANCIA IL METODO SHOWCHATFRAGMENT
+
+     */
     override fun onResume() {
         super.onResume()
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        /* se il servizio di chat è diverso da null
+            ma se connected naviga al frammento!!
+         */
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
             if (mChatService?.getState() == BluetoothChatService.STATE_NONE) {
@@ -335,10 +352,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 mChatService?.start()
             }
         }
-
         if(connected)
             showChatFragment()
-
     }
 
     override fun onDestroy() {
@@ -349,6 +364,24 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     /**
      * The Handler that gets information back from the BluetoothChatService
+     */
+    /*HANDLER RICEVE UN MESSAGGIO INDIETRO DAL SERVIZIO!!!!!
+        QUANDO SCRIVE UN MESSAGGIO INVOCA UN METODO DELLA CHAT DOPO AVER VERIFICATO CHE E' CONNESSO ALLA CHAT
+        ma handler è uno dei concetti chiave di Android Kotlin
+        vedi RayWenderlich. tutorial pratici da fare:
+        cosa fà,a cosa serve e come si testa
+        Un Handler permette di restituire indietro al main thread (UI) un altro thread che lavora in background!!!!
+        e' un concetto importante!!!
+        pag.389 Libro di android in italiano!!!!!
+        https://medium.com/@ankit.sinhal/handler-in-android-d138c1f4980e
+        articolo interessante!!! ma c'è qualche tutorial da fare pratico
+        perchè utile? PERCHE' ANDROID NON PERMETTE CHE GLI ALTRI THREAD COMUNICHINO CON IL THREAD PRINCIPALE
+        ma c'è ancora bisogno con gli ultimi aggiornamenti e coroutines?
+        Se hai bisogno di aggiornare la UI thread da un altro thread hai bisogno di handler
+        ma quali sono i metodi principali di Handler per la gestione del thread?
+        ma si possono mettere handler con fragment?
+        sembra che gli handler siano legati a services, è così?
+        
      */
     private val mHandler = @SuppressLint("HandlerLeak")
     object : Handler() {
@@ -423,7 +456,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
     }
 
+/* A partire dallo stato, se bluetoothChatService è connected (altrimenti ritorna subito)
+    SE IL MESSAGGIO NON E' VUOTO, LANCIA IL METODO WRITE DI MCHATSERVICE
 
+ */
     private fun sendMessage(message: String) {
 
         // Check that we're actually connected before trying anything

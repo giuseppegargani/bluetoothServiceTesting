@@ -32,8 +32,8 @@ class BluetoothChatService(context: Context, handler: Handler){
     private val  TAG: String = javaClass.simpleName
 
     // Unique UUID for this application
-    private val MY_UUID_SECURE = UUID.fromString("29621b37-e817-485a-a258-52da5261421a")
-    private val MY_UUID_INSECURE = UUID.fromString("d620cd2b-e0a4-435b-b02e-40324d57195b")
+    private val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+    private val MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
 
     // Name for the SDP record when creating server socket
@@ -49,7 +49,8 @@ class BluetoothChatService(context: Context, handler: Handler){
     }
 
     init {
-
+        /*mAdapter viene instanziato in init!! con getDefaultAdapter
+         */
         mAdapter = BluetoothAdapter.getDefaultAdapter()
         mState = STATE_NONE
         mNewState = mState
@@ -59,6 +60,12 @@ class BluetoothChatService(context: Context, handler: Handler){
     /**
      * Return the current connection state.
      */
+    /*Metodo che si può invocare da fuori e che restituisce lo stato della connessione al servizio!!!
+    Si parla di connessione al servizio (in programmazione asincrona!!!
+    ma dove prende mState? è un intero che viene inizializzato a zero
+    successivamente con il metodo INIT che da alcuni è considerato necessario gli viene assegnato il valore 0 STATE_NONE
+    alla variabile mNewState viene assegnato il valore di mState (Puntatore di riferimento)
+     */
     @Synchronized fun getState(): Int {
         return mState
     }
@@ -66,6 +73,10 @@ class BluetoothChatService(context: Context, handler: Handler){
     /**
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume()
+     */
+    /* Inizia AcceptThread per iniziare una sessione in listening (server mode) riceve messaggi
+        e viene chiamato da onResume di Activity
+        ma cosa fà onResume?
      */
     @Synchronized fun start() {
         Log.d(TAG, "start")
@@ -76,7 +87,7 @@ class BluetoothChatService(context: Context, handler: Handler){
             mConnectThread = null
         }
 
-        // Cancel any thread currently running a connection
+        // Cancel any thread currently running a connection   si cancella ogni thread the attualmente esegue connessione
         if (mConnectedThread != null) {
             mConnectedThread?.cancel()
             mConnectedThread = null
@@ -181,6 +192,9 @@ class BluetoothChatService(context: Context, handler: Handler){
     /**
      * Stop all threads
      */
+    /* Stoppa tutti i threads
+
+     */
     @Synchronized fun stop() {
         Log.d(TAG, "stop")
 
@@ -275,6 +289,18 @@ class BluetoothChatService(context: Context, handler: Handler){
      * This thread runs while listening for incoming connections. It behaves
      * like a server-side client. It runs until a connection is accepted
      * (or until cancelled).
+     */
+    /*Questo thread esegue mentre ascolta per connessioni in arrivo. Si comporta come un client lato server.
+      Esegue fino a quando una connessione è accettata (o fino a cancellazione)
+        la risultante di mState è STATE_LISTEN
+        tmp è un BluetoothServerSocket che viene inizializzato a null
+        SE IL TIPO E' SECURE inizializza con mAdapter?.listenUsingRfcommWithServiceRecord
+        altrimenti con un nome e uuid insecure!!! viene inizializzato il BluetoothServerSocket
+        Vengono quindi inizializzati entrambi con bluetoothAdapter ma con nome e uuid diversi
+        SE NON E' POSSIBILE INIZIALIZZARLA EMETTI ERRORE E IL LOG CORRISPONDENTE
+        alla fine di Init risultano inizializzati mmServerSocket e mState (STATE_LISTEN)
+        ma cosa fà?
+        in run viene accettato il server socket
      */
     private inner class AcceptThread(secure: Boolean) : Thread() {
         // The local server socket

@@ -30,6 +30,9 @@ class DevicesRecyclerViewAdapter(val mDeviceList: List<DeviceData>, val context:
         return mDeviceList.size
     }
 
+    /* c'è anche un metodo per inizializzare ViewHolder!!
+    QUALE E' IL METODO CORRETTO PER METTERE UN LISTENER SU RECYCLERVIEW?
+     */
     inner class VH(itemView: View?) : RecyclerView.ViewHolder(itemView!!){
 
         var label: TextView? = itemView?.findViewById(R.id.largeLabel)
@@ -45,6 +48,8 @@ class DevicesRecyclerViewAdapter(val mDeviceList: List<DeviceData>, val context:
         this.listener = listener
     }
 
+    /*THIS IS AN INTERFACE THAT HAS BEEN IMPLEMENTED DIRECTLY INSIDE ACTIVITY OR FRAGMENT THAT USE THIS ADAPTER
+     */
     interface ItemClickListener{
         fun itemClicked(deviceData: DeviceData)
     }

@@ -76,6 +76,7 @@ class ChatAdapter(val chatData: List<Message>, val context: Context) : RecyclerV
         }
     }
 
+    //sono due Viewholder differenti a seconda se messaggio è inviato o ricevuto
     inner class SentHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         var sentTV = itemView.findViewById<TextView>(R.id.sentMessage)
         var timeStamp = itemView.findViewById<TextView>(R.id.timeStamp)

@@ -103,6 +103,9 @@ class ChatFragment : Fragment(), View.OnClickListener {
         fun onCommunication(message: String)
     }
 
+    /*Piace il check sulla nullità della mamma activity
+
+     */
     fun communicate(message: Message){
         messageList.add(message)
         if(activity != null) {
