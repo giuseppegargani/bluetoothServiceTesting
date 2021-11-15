@@ -23,6 +23,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
+import android.R.string
+
+
+
+
 /* RIGUARDO ALLA ARCHITETTURA GENERALE
     in onCreate si inizializza il service bluechatService con mHandler
     chatService è iniziata a null (all'inizio del programma)
@@ -430,7 +435,9 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 Constants.MESSAGE_READ -> {
                     val readBuf = msg.obj as ByteArray
                     // construct a string from the valid bytes in the buffer
-                    val readMessage = String(readBuf, 0, msg.arg1)
+                    //val readMessage = String(readBuf, 0, msg.arg1)
+                    val readMessage = readBuf.toHex2().trimEnd('0')
+
                     val milliSecondsTime = System.currentTimeMillis()
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
@@ -546,5 +553,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             paddings + bytes
         }
     }
+    @ExperimentalUnsignedTypes
+    fun ByteArray.toHex2(): String = asUByteArray().joinToString("") { it.toString(radix = 16).padStart(2, '0') }
 
 }
