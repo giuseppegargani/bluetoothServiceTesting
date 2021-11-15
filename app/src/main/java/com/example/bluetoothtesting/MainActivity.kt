@@ -472,7 +472,15 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         if (message.isNotEmpty()) {
             // Get the message bytes and tell the BluetoothChatService to write
             val send = message.toByteArray()
-            mChatService?.write(send)
+
+            val REQUEST_INTRAMAX: UByte = 0x06U
+            var tempArray = ubyteArrayOf(0xF0U, REQUEST_INTRAMAX)
+            var checksum = REQUEST_INTRAMAX.toInt().toByteArray().toUByteArray()
+            tempArray += checksum + 0xF1U.toUByte()
+            val packet = tempArray.toByteArray()
+
+
+            mChatService?.write(packet)
 
             // Reset out string buffer to zero and clear the edit text field
             //mOutStringBuffer.setLength(0)
@@ -502,6 +510,41 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             super.onBackPressed()
         else
             supportFragmentManager.popBackStack()
+    }
+
+    //UTILITIY
+    fun Int.toByteArray(isBigEndian: Boolean = true, size: Int = 0): ByteArray {
+        var bytes = byteArrayOf()
+        var arraySize = size
+        if (size == 0) {
+            arraySize = UInt.SIZE_BYTES
+        }
+
+        var n = this
+
+        if (n == 0x00) {
+            bytes += n.toByte()
+        } else {
+            while (n != 0x00) {
+                val b = n.toByte()
+
+                bytes += b
+
+                n = n.shr(Byte.SIZE_BITS)
+            }
+        }
+
+        val padding = 0x00u.toByte()
+        var paddings = byteArrayOf()
+        repeat(arraySize - bytes.count()) {
+            paddings += padding
+        }
+
+        return if (isBigEndian) {
+            paddings + bytes.reversedArray()
+        } else {
+            paddings + bytes
+        }
     }
 
 }
