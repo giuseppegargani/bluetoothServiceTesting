@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
 import android.R.string
-
-
+import android.util.Log
+import java.lang.IllegalStateException
 
 
 /* RIGUARDO ALLA ARCHITETTURA GENERALE
@@ -478,34 +478,40 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
         // Check that there's actually something to send
         if (message.isNotEmpty()) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            val send = message.toByteArray()
 
-            /*
-            //Verified that can receive db of intrapleurical pressure after having sent a message
-            val REQUEST_INTRAMAX: UByte = 0x06U
-            var tempArray = ubyteArrayOf(0xF0U, REQUEST_INTRAMAX)
-            var checksum = REQUEST_INTRAMAX.toInt().toByteArray().toUByteArray()
-            tempArray += checksum + 0xF1U.toUByte()
-            val packet = tempArray.toByteArray()*/
-
-            if(cambioDati) {
-                var fakeSignal = "F009000162006BF1F0010001010002F1F002000201020005F1F003000200010004F1F0040003B7B7B70229F1F00700020097009EF1F008000200F90101F1F00B000100000BF1F00C000101000DF1"
-                var packet: ByteArray = fakeSignal.decodeHex()
-                mChatService?.write(packet)
-                cambioDati = false
-            }
-            else {
-                val fakeSignal = "F009000163006CF1F0010001020003F1F002000201030006F1F003000200040007F1F0040003BEBEBE023EF1F00700020096009DF1F008000200F80100F1F00B000100000BF1F00C000101000DF1"
-                val packet: ByteArray = fakeSignal.decodeHex()
-                mChatService?.write(packet)
-                cambioDati = true
+            if(message==" "){
+                if(cambioDati) {
+                    var fakeSignal = "F009000162006BF1F0010001010002F1F002000201020005F1F003000200010004F1F0040003B7B7B70229F1F00700020097009EF1F008000200F90101F1F00B000100000BF1F00C000101000DF1"
+                    var packet: ByteArray = fakeSignal.decodeHex()
+                    mChatService?.write(packet)
+                    cambioDati = false
+                }
+                else {
+                    val fakeSignal = "F009000163006CF1F0010001020003F1F002000201030006F1F003000200040007F1F0040003BEBEBE023EF1F00700020096009DF1F008000200F80100F1F00B000100000BF1F00C000101000DF1"
+                    val packet: ByteArray = fakeSignal.decodeHex()
+                    mChatService?.write(packet)
+                    cambioDati = true
+                }
             }
 
-            // Reset out string buffer to zero and clear the edit text field
-            //mOutStringBuffer.setLength(0)
-            //mOutEditText.setText(mOutStringBuffer)
+            else{
+                try {
+                    val send = message.decodeHex()
+                    mChatService?.write(send)
+                }
+                catch(e: IllegalStateException) {
+                    Toast.makeText(this,"Rewrite: message must have an even length", Toast.LENGTH_SHORT).show()
+                    val send = message.toByteArray()
+                    mChatService?.write(send)
+                }
+
+                // Reset out string buffer to zero and clear the edit text field
+                //mOutStringBuffer.setLength(0)
+                //mOutEditText.setText(mOutStringBuffer)
+            }
+
         }
+
     }
 
     private fun showChatFragment() {
