@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var connectionDot: ImageView
     private lateinit var  mConnectedDeviceName: String
     private var connected: Boolean = false
+    private var cambioDati = false
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var chatFragment: ChatFragment
@@ -425,12 +426,11 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 Constants.MESSAGE_WRITE -> {
                     val writeBuf = msg.obj as ByteArray
                     // construct a string from the buffer
-                    val writeMessage = String(writeBuf)
+                    val writeMessage = writeBuf.toHex2()
                     //Toast.makeText(this@MainActivity,"Me: $writeMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add("Me:  " + writeMessage)
                     val milliSecondsTime = System.currentTimeMillis()
                     chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-
                 }
                 Constants.MESSAGE_READ -> {
                     val readBuf = msg.obj as ByteArray
@@ -463,7 +463,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
     }
 
-/* A partire dallo stato, se bluetoothChatService è connected (altrimenti ritorna subito)
+/* SENDMESSAGE OF HANDLER
+    A partire dallo stato, se bluetoothChatService è connected (altrimenti ritorna subito)
     SE IL MESSAGGIO NON E' VUOTO, LANCIA IL METODO WRITE DI MCHATSERVICE
 
  */
@@ -480,14 +481,26 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             // Get the message bytes and tell the BluetoothChatService to write
             val send = message.toByteArray()
 
+            /*
+            //Verified that can receive db of intrapleurical pressure after having sent a message
             val REQUEST_INTRAMAX: UByte = 0x06U
             var tempArray = ubyteArrayOf(0xF0U, REQUEST_INTRAMAX)
             var checksum = REQUEST_INTRAMAX.toInt().toByteArray().toUByteArray()
             tempArray += checksum + 0xF1U.toUByte()
-            val packet = tempArray.toByteArray()
+            val packet = tempArray.toByteArray()*/
 
-
-            mChatService?.write(packet)
+            if(cambioDati) {
+                var fakeSignal = "F009000162006BF1F0010001010002F1F002000201020005F1F0040003B7B7B70229F1F00700020097009EF1F008000200F90101F1F00B000100000BF1F00C000101000DF1"
+                var packet: ByteArray = fakeSignal.decodeHex()
+                mChatService?.write(packet)
+                cambioDati = false
+            }
+            else {
+                val fakeSignal = "F009000163006CF1F0010001020003F1F002000201030006F1F0040003BEBEBE023EF1F00700020096009DF1F008000200F80100F1F00B000100000BF1F00C000101000DF1"
+                val packet: ByteArray = fakeSignal.decodeHex()
+                mChatService?.write(packet)
+                cambioDati = true
+            }
 
             // Reset out string buffer to zero and clear the edit text field
             //mOutStringBuffer.setLength(0)
@@ -553,7 +566,16 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             paddings + bytes
         }
     }
+
     @ExperimentalUnsignedTypes
     fun ByteArray.toHex2(): String = asUByteArray().joinToString("") { it.toString(radix = 16).padStart(2, '0') }
+
+    fun String.decodeHex(): ByteArray {
+        check(length % 2 == 0) { "Must have an even length" }
+
+        return chunked(2)
+            .map { it.toInt(16).toByte() }
+            .toByteArray()
+    }
 
 }
