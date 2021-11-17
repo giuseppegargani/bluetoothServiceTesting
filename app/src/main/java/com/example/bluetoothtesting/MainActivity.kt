@@ -499,7 +499,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     val send = message.decodeHex()
                     mChatService?.write(send)
                 }
-                catch(e: IllegalStateException) {
+                catch(e: Exception) {
                     Toast.makeText(this,"Rewrite: message must have an even length", Toast.LENGTH_SHORT).show()
                     val send = message.toByteArray()
                     mChatService?.write(send)
@@ -509,9 +509,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 //mOutStringBuffer.setLength(0)
                 //mOutEditText.setText(mOutStringBuffer)
             }
-
         }
-
     }
 
     private fun showChatFragment() {
