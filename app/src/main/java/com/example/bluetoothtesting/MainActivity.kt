@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var  mConnectedDeviceName: String
     private var connected: Boolean = false
     private var cambioDati = false
+    private var lastMessage: String = ""
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var chatFragment: ChatFragment
@@ -389,6 +390,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         sembra che gli handler siano legati a services, è così?
         
      */
+    /*Proviamo a mandare db quando riceve!! un comando
+
+     */
+
     private val mHandler = @SuppressLint("HandlerLeak")
     object : Handler() {
         override fun handleMessage(msg: Message) {
@@ -439,9 +444,17 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     val readMessage = readBuf.toHex2().trimEnd('0')
 
                     val milliSecondsTime = System.currentTimeMillis()
+
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
                     chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
+
+                    if (readMessage == "f00500000005f1") {
+                        val writeMessage = "F00501F4A5B3B3B4A5B4B5B5B6B6B6B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B7B7B8B8B8B7B8B8B7B7B7B7B8B8B7B7B8A5B3B3B3B3B3B4B3B3B4B4B4B4B4B3B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4B4A6B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B3B3B3B3B3B4B3B4B4B4B4A5B3B3B3B3B3B3B3B3B3B3B3B3B3B3B4B4B3B3B4B3B3B4B4B4B4B4B4B3B4B4B3B4B3B3B3B3B4B4B3B3B4B4B4B3B4B4B4B4B4B3B4B4B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4A5B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B5B4B4B4B5B4B55FFFF1"
+                        Toast.makeText(this@MainActivity, "Verificato",Toast.LENGTH_SHORT).show()
+                        chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                        chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                    }
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
                     // save the connected device's name
