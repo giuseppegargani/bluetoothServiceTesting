@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import android.R.string
 import android.util.Log
 import java.lang.IllegalStateException
+import kotlin.concurrent.thread
 
 
 /* RIGUARDO ALLA ARCHITETTURA GENERALE
@@ -54,8 +55,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var connectionDot: ImageView
     private lateinit var  mConnectedDeviceName: String
     private var connected: Boolean = false
+    @Volatile
     private var cambioDati = false
-    private var lastMessage: String = ""
+    //private var lastMessage: String = ""
+    //@Volatile var readMessage: String = ""
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var chatFragment: ChatFragment
@@ -443,18 +446,43 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     //val readMessage = String(readBuf, 0, msg.arg1)
                     val readMessage = readBuf.toHex2().trimEnd('0')
 
+                    Log.d("dati","dati: readBuf: ${readBuf} message: $readMessage")
+
                     val milliSecondsTime = System.currentTimeMillis()
 
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
                     chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
 
-                    if (readMessage == "f00500000005f1") {
-                        val writeMessage = "F00501F4A5B3B3B4A5B4B5B5B6B6B6B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B7B7B8B8B8B7B8B8B7B7B7B7B8B8B7B7B8A5B3B3B3B3B3B4B3B3B4B4B4B4B4B3B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4B4A6B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B3B3B3B3B3B4B3B4B4B4B4A5B3B3B3B3B3B3B3B3B3B3B3B3B3B3B4B4B3B3B4B3B3B4B4B4B4B4B4B3B4B4B3B4B3B3B3B3B4B4B3B3B4B4B4B3B4B4B4B4B4B3B4B4B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4A5B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B5B4B4B4B5B4B55FFFF1"
+                    /*if (readMessage == "f00500000005f1") {
+                        //valore lungo: F00501F4A5B3B3B4A5B4B5B5B6B6B6B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B7B7B8B8B8B7B8B8B7B7B7B7B8B8B7B7B8A5B3B3B3B3B3B4B3B3B4B4B4B4B4B3B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4B4A6B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B3B3B3B3B3B4B3B4B4B4B4A5B3B3B3B3B3B3B3B3B3B3B3B3B3B3B4B4B3B3B4B3B3B4B4B4B4B4B4B3B4B4B3B4B3B3B3B3B4B4B3B3B4B4B4B3B4B4B4B4B4B3B4B4B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4A5B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B5B4B4B4B5B4B55FFFF1
+                        val writeMessage = "F0050007A5B4B3B3B4B3B404DFF1F00F0000000FF1"
                         Toast.makeText(this@MainActivity, "Verificato",Toast.LENGTH_SHORT).show()
-                        chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                        chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+
+                        //corrispondenti o meno a zero ore??
+                        chatFragment.communicate(com.example.bluetoothtesting.Message("F0050007A5B4B3B3B4B3B404DFF1F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                        Thread.sleep(500)
+                        //quando arriva il primo manda il secondo? F00600000006F1 o chiede subito il secondo? controlla le ore? che gamma di valori?
+                        chatFragment.communicate(com.example.bluetoothtesting.Message("F0060007A6B4B3B4B4B3B404E2F1F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+
+                        //chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                    }*/
+                    /*if (readMessage == "f00900000009f1") {
+                        chatFragment.communicate(com.example.bluetoothtesting.Message("F0090001000009F1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
                     }
+                    if(readMessage == "f01000000010f1"){
+                        //F00D00350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DF1F00F0000000FF1
+                        chatFragment.communicate(com.example.bluetoothtesting.Message("F010000200000010F1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                        Thread.sleep(500)
+                        chatFragment.communicate(com.example.bluetoothtesting.Message("F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                        Toast.makeText(this@MainActivity, "Verificato",Toast.LENGTH_SHORT).show()
+                    }
+                    if(readMessage == "f01100000011f1"){
+                        //F00D00350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DF1F00F0000000FF1
+                        chatFragment.communicate(com.example.bluetoothtesting.Message("F011000200000011F1F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                        Toast.makeText(this@MainActivity, "Verificato",Toast.LENGTH_SHORT).show()
+                    }*/
+                    //readMessage = ""
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
                     // save the connected device's name
@@ -474,6 +502,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 }
             }
         }
+
     }
 
 /* SENDMESSAGE OF HANDLER
@@ -494,13 +523,13 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
             if(message==" "){
                 if(cambioDati) {
-                    var fakeSignal = "F009000162006BF1F0010001010002F1F002000201020005F1F003000200010004F1F0040003B7B7B70229F1F00700020097009EF1F008000200F90101F1F00B000100000BF1F00C000101000DF1"
+                    var fakeSignal = "F0090001000009F1F0010001010002F1F002000201020005F1F003000200010004F1F0040003B7B7B70229F1F00700020097009EF1F008000200F90101F1F00B000100000BF1F00C000101000DF1"
                     var packet: ByteArray = fakeSignal.decodeHex()
                     mChatService?.write(packet)
                     cambioDati = false
                 }
                 else {
-                    val fakeSignal = "F009000163006CF1F0010001020003F1F002000201030006F1F003000200040007F1F0040003BEBEBE023EF1F00700020096009DF1F008000200F80100F1F00B000100000BF1F00C000101000DF1"
+                    val fakeSignal = "F0090001000009F1F0010001020003F1F002000201030006F1F003000200040007F1F0040003BEBEBE023EF1F00700020096009DF1F008000200F80100F1F00B000100000BF1F00C000101000DF1"
                     val packet: ByteArray = fakeSignal.decodeHex()
                     mChatService?.write(packet)
                     cambioDati = true
@@ -595,4 +624,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             .toByteArray()
     }
 
+    fun calcoloChecksum(stringa: String ): String {
+        //fai una lista di due caratteri
+        var lista = stringa.chunked(2).map { it.toInt(16) }.sumBy{it}
+
+        return lista.toString(16)
+    }
 }

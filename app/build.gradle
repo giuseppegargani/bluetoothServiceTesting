@@ -51,6 +51,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     debugImplementation 'androidx.fragment:fragment-testing:1.3.6'
+    //per controllare memory leaks
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-3'
+
 
     //navigazione
     implementation "android.arch.navigation:navigation-fragment-ktx:$version_navigation"
