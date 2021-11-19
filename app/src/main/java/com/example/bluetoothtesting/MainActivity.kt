@@ -400,6 +400,39 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     private val mHandler = @SuppressLint("HandlerLeak")
     object : Handler() {
+
+        var listaMin = mutableListOf<String>("elementoLista")
+        var listaMax = mutableListOf<String>()
+
+        fun calcoloChecksum(stringa: String ): String {
+            //fai una lista di due caratteri
+            var lista = stringa.chunked(2).map { it.toInt(16) }.sumBy{it} //aggiungo stringa 05
+
+            return lista.toString(16)
+        }
+
+        fun converti (stringa:String): String {
+            return stringa
+        }
+
+        fun calcoloLunghezza(stringa: String): String{
+            return stringa
+        }
+        fun pulisciEdAggiungiStringa(stringa: String){
+            //calcolo checkSum
+            Log.d("calcolo", "stringa $stringa")
+            var lista = stringa.chunked(2)
+            var packetId:String = lista[0]+lista[1]
+            var checksum:String = lista[lista.size-3]+lista[lista.size-2]
+            var payload = lista.subList(4,lista.size-3)
+            var convertita = payload.map { (((it.toLong(16)*2)-330)/10).toString() }
+
+            var calcoloChecksum: String = calcoloChecksum(payload.joinToString(""))
+            val stringaUnita = payload.joinToString("")
+            Log.d("calcolo","packetId: $packetId checksum: $checksum e stringa: $convertita e calcolo $calcoloChecksum ")
+        }
+
+
         override fun handleMessage(msg: Message) {
 
             when (msg.what) {
@@ -441,6 +474,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     val milliSecondsTime = System.currentTimeMillis()
                     chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
                 }
+
                 Constants.MESSAGE_READ -> {
                     val readBuf = msg.obj as ByteArray
                     // construct a string from the valid bytes in the buffer
@@ -451,43 +485,20 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
                     val milliSecondsTime = System.currentTimeMillis()
 
+                    //pulisce e riempie variabile lista
+                    if(readMessage.startsWith("f005")){
+                        pulisciEdAggiungiStringa(readMessage)
+                    }
+
+                    //manda un messaggio Toast quando arriva a fineDB con checksum ed altro
+                    if(readMessage.endsWith("f00f0000000ff1")){
+                        Toast.makeText(this@MainActivity,listaMin.toString(),Toast.LENGTH_SHORT).show()
+                    }
+
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
                     chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
 
-                    if (readMessage.length>150){
-                        var lista = readMessage.chunked(150)
-                        Log.d("messaggio", "lista: $lista")
-                    }
-                    /*if (readMessage == "f00500000005f1") {
-                        //valore lungo: F00501F4A5B3B3B4A5B4B5B5B6B6B6B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B7B7B8B8B8B7B8B8B7B7B7B7B8B8B7B7B8A5B3B3B3B3B3B4B3B3B4B4B4B4B4B3B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4B4A6B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B3B3B3B3B3B4B3B4B4B4B4A5B3B3B3B3B3B3B3B3B3B3B3B3B3B3B4B4B3B3B4B3B3B4B4B4B4B4B4B3B4B4B3B4B3B3B3B3B4B4B3B3B4B4B4B3B4B4B4B4B4B3B4B4B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4A5B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B5B4B4B4B5B4B55FFFF1
-                        val writeMessage = "F0050007A5B4B3B3B4B3B404DFF1F00F0000000FF1"
-                        Toast.makeText(this@MainActivity, "Verificato",Toast.LENGTH_SHORT).show()
-
-                        //corrispondenti o meno a zero ore??
-                        chatFragment.communicate(com.example.bluetoothtesting.Message("F0050007A5B4B3B3B4B3B404DFF1F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                        Thread.sleep(500)
-                        //quando arriva il primo manda il secondo? F00600000006F1 o chiede subito il secondo? controlla le ore? che gamma di valori?
-                        chatFragment.communicate(com.example.bluetoothtesting.Message("F0060007A6B4B3B4B4B3B404E2F1F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-
-                        //chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                    }*/
-                    /*if (readMessage == "f00900000009f1") {
-                        chatFragment.communicate(com.example.bluetoothtesting.Message("F0090001000009F1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                    }
-                    if(readMessage == "f01000000010f1"){
-                        //F00D00350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DF1F00F0000000FF1
-                        chatFragment.communicate(com.example.bluetoothtesting.Message("F010000200000010F1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                        Thread.sleep(500)
-                        chatFragment.communicate(com.example.bluetoothtesting.Message("F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                        Toast.makeText(this@MainActivity, "Verificato",Toast.LENGTH_SHORT).show()
-                    }
-                    if(readMessage == "f01100000011f1"){
-                        //F00D00350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DF1F00F0000000FF1
-                        chatFragment.communicate(com.example.bluetoothtesting.Message("F011000200000011F1F00F0000000FF1",milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                        Toast.makeText(this@MainActivity, "Verificato",Toast.LENGTH_SHORT).show()
-                    }*/
-                    //readMessage = ""
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
                     // save the connected device's name
@@ -620,6 +631,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     @ExperimentalUnsignedTypes
     fun ByteArray.toHex2(): String = asUByteArray().joinToString("") { it.toString(radix = 16).padStart(2, '0') }
+
     fun String.decodeHex(): ByteArray {
         check(length % 2 == 0) { "Must have an even length" }
 
@@ -627,6 +639,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             .map { it.toInt(16).toByte() }
             .toByteArray()
     }
+
     fun calcoloChecksum(stringa: String ): String {
         //fai una lista di due caratteri
         var lista = stringa.chunked(2).map { it.toInt(16) }.sumBy{it}
