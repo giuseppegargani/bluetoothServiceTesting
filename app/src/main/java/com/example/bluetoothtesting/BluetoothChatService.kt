@@ -306,6 +306,7 @@ class BluetoothChatService(context: Context, handler: Handler){
         ma cosa fà?
         in run viene accettato il server socket
      */
+
     private inner class AcceptThread(secure: Boolean) : Thread() {
         // The local server socket
         private val mmServerSocket: BluetoothServerSocket?
@@ -495,7 +496,7 @@ class BluetoothChatService(context: Context, handler: Handler){
 
         override fun run() {
             Log.i(TAG, "BEGIN mConnectedThread")
-            val buffer = ByteArray(1024)
+            var buffer = ByteArray(2048)
             var bytes: Int
 
             // Keep listening to the InputStream while connected
@@ -505,8 +506,9 @@ class BluetoothChatService(context: Context, handler: Handler){
                     bytes = mmInStream?.read(buffer) ?: 0
 
                     // Send the obtained bytes to the UI Activity
-                    mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-                        ?.sendToTarget()
+                    mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)?.sendToTarget()
+                    buffer=ByteArray(2048)
+
                 } catch (e: IOException) {
                     Log.e(TAG, "disconnected", e)
                     connectionLost()

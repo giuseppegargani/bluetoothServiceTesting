@@ -369,6 +369,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(mReceiver)
+
     }
 
 
@@ -454,6 +455,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
                     chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
 
+                    if (readMessage.length>150){
+                        var lista = readMessage.chunked(150)
+                        Log.d("messaggio", "lista: $lista")
+                    }
                     /*if (readMessage == "f00500000005f1") {
                         //valore lungo: F00501F4A5B3B3B4A5B4B5B5B6B6B6B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B8B7B7B8B8B8B7B8B8B7B7B7B7B8B8B7B7B8A5B3B3B3B3B3B4B3B3B4B4B4B4B4B3B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4B4A6B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4A5B3B3B3B3B3B3B3B3B4B3B4B4B4B4A5B3B3B3B3B3B3B3B3B3B3B3B3B3B3B4B4B3B3B4B3B3B4B4B4B4B4B4B3B4B4B3B4B3B3B3B3B4B4B3B3B4B4B4B3B4B4B4B4B4B3B4B4B4B4B4B4B4B4B4B3B4B4B4B4B4B4B4A5B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B4B5B4B4B4B5B4B55FFFF1
                         val writeMessage = "F0050007A5B4B3B3B4B3B404DFF1F00F0000000FF1"
@@ -615,7 +620,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     @ExperimentalUnsignedTypes
     fun ByteArray.toHex2(): String = asUByteArray().joinToString("") { it.toString(radix = 16).padStart(2, '0') }
-
     fun String.decodeHex(): ByteArray {
         check(length % 2 == 0) { "Must have an even length" }
 
@@ -623,7 +627,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             .map { it.toInt(16).toByte() }
             .toByteArray()
     }
-
     fun calcoloChecksum(stringa: String ): String {
         //fai una lista di due caratteri
         var lista = stringa.chunked(2).map { it.toInt(16) }.sumBy{it}
