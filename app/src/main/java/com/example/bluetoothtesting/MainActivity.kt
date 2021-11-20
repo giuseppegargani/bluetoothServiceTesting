@@ -498,6 +498,9 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                         Toast.makeText(this@MainActivity,listaMin.toString(),Toast.LENGTH_SHORT).show()
                     }
 
+                     if(readMessage.startsWith("f004")) {
+                        chatFragment.cambiaValore(readMessage)
+                    }
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
                     chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))

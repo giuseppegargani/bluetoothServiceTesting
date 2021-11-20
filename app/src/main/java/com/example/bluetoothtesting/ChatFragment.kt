@@ -3,15 +3,18 @@ package com.example.bluetoothtesting
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bluetoothtesting.databinding.ChatFragmentBinding
 
 /**
  * Created by giuseppe gargani
@@ -25,6 +28,9 @@ class ChatFragment : Fragment(), View.OnClickListener {
     private var chatAdapter: ChatAdapter? = null
     private lateinit var recyclerviewChat: RecyclerView
     private val messageList = arrayListOf<Message>()
+
+    //Giuseppe
+    private var pressureView: TextView? = null
 
     companion object {
         fun newInstance(): ChatFragment {
@@ -115,5 +121,11 @@ class ChatFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    //Giuseppe da mettere in ViewModel
+    fun cambiaValore(stringa:String){
+        pressureView = pressureView ?: requireActivity().findViewById(R.id.textView5)
+        Log.d("verificaCambiaValore", "valore: $stringa")
+        pressureView?.text = stringa
+    }
 
 }
