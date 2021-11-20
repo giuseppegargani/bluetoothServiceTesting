@@ -28,6 +28,9 @@ import android.util.Log
 import java.lang.IllegalStateException
 import kotlin.concurrent.thread
 
+/* created by Giuseppe Gargani
+
+ */
 
 /* RIGUARDO ALLA ARCHITETTURA GENERALE
     in onCreate si inizializza il service bluechatService con mHandler

@@ -1,7 +1,7 @@
 package com.example.bluetoothtesting
 
 /**
- * Created by Giuseppe Gargani on 26/10/21 based on Ramankit
+ * Created by Giuseppe Gargani
  */
 
 data class DeviceData(val deviceName: String?,val deviceHardwareAddress: String){

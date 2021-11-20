@@ -14,7 +14,7 @@ import java.io.OutputStream
 import java.util.*
 
 /**
- * Created by giuseppe gargani 26/10/21 based on ramankit 20/7/17.
+ * Created by giuseppe gargani 26/10/21
  */
 
 class BluetoothChatService(context: Context, handler: Handler){

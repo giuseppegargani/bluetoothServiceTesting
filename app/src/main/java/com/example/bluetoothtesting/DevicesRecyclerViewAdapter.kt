@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Created by R Ankit on 18-07-2017.
+ * Created by Giuseppe Gargani
  */
 
 class DevicesRecyclerViewAdapter(val mDeviceList: List<DeviceData>, val context: Context) :

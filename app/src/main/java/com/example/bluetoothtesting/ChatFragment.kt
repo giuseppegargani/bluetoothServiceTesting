@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Created by giuseppe gargani on 26/10/21 based on ramankit.
+ * Created by giuseppe gargani
  */
 
 class ChatFragment : Fragment(), View.OnClickListener {
