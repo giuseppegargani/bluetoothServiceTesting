@@ -132,8 +132,13 @@ class BluetoothChatService(context: Context, handler: Handler){
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
+
+            Log.d("giuseppe", " e vuole connettersi a ${device?.name}")
+
             mConnectedThread?.cancel()
             mConnectedThread = null
+            mConnectThread = ConnectThread(device, secure)
+            mConnectThread?.start()
         }
 
         // Start the thread to connect with the given device
