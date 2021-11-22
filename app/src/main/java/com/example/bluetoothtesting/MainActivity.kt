@@ -134,6 +134,46 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
          */
         mChatService = BluetoothChatService(this, mHandler)
 
+//        if (mBtAdapter == null){
+//            showAlertAndExit()
+//            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
+//        }
+//        else {
+//
+//            if (mBtAdapter?.isEnabled == false) {
+//                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+//                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+//                btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
+//            } else {
+//                status.text = getString(R.string.not_connected)
+//                btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
+//            }
+//
+//            // Get a set of currently paired devices
+//            val pairedDevices = mBtAdapter?.bondedDevices
+//            val mPairedDeviceList = arrayListOf<DeviceData>()
+//
+//            // If there are paired devices, add each one to the ArrayAdapter
+//            if (pairedDevices?.size ?: 0 > 0) {
+//                // There are paired devices. Get the name and address of each paired device.
+//                for (device in pairedDevices!!) {
+//                    val deviceName = device.name
+//                    val deviceHardwareAddress = device.address // MAC address
+//                    mPairedDeviceList.add(DeviceData(deviceName,deviceHardwareAddress))
+//                }
+//
+//                val devicesAdapter = DevicesRecyclerViewAdapter(context = this, mDeviceList = mPairedDeviceList)
+//                recyclerViewPaired.adapter = devicesAdapter
+//                devicesAdapter.setItemClickListener(this)
+//                headerLabelPaired.visibility = View.VISIBLE
+//            }
+//        }
+        checkActivation()
+        //showChatFragment()
+
+    }
+
+    private fun checkActivation() {
         if (mBtAdapter == null){
             showAlertAndExit()
             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
@@ -168,9 +208,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 headerLabelPaired.visibility = View.VISIBLE
             }
         }
-
-        //showChatFragment()
-
     }
 
     private fun makeVisible() {
@@ -622,11 +659,15 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         sendMessage(message)
     }
 
+    //se torna indietro ricontrolla attivazione bt
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 0)
             super.onBackPressed()
         else
-            supportFragmentManager.popBackStack()
+        {supportFragmentManager.popBackStack()
+        Toast.makeText(this, "tornato indietro", Toast.LENGTH_SHORT).show()
+            checkActivation()
+        }
     }
 
     //UTILITIY
