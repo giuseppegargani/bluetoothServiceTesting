@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">bluetoothTesting</string>
+    <string name="app_name">Bluetooth Testing</string>
     <string name="nothing"> </string>
     <string name="search_devices">Search Devices</string>
     <string name="not_compatible">Not compatible</string>
