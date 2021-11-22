@@ -666,7 +666,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         else
         {supportFragmentManager.popBackStack()
         Toast.makeText(this, "tornato indietro", Toast.LENGTH_SHORT).show()
-            checkActivation()
+            if((mBtAdapter==null)||(mBtAdapter?.isEnabled == false)) checkActivation() //if accidentally turned off bluetooth
         }
     }
 
