@@ -28,9 +28,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
     private var chatAdapter: ChatAdapter? = null
     private lateinit var recyclerviewChat: RecyclerView
     private val messageList = arrayListOf<Message>()
-
-    //Giuseppe
-    private var pressureView: TextView? = null
+    private lateinit var pressureView: TextView
 
     companion object {
         fun newInstance(): ChatFragment {
@@ -58,6 +56,9 @@ class ChatFragment : Fragment(), View.OnClickListener {
         val chatIcon: ImageView = mView.findViewById(R.id.sendIcon)
         sendButton = mView.findViewById(R.id.sendButton)
         recyclerviewChat = mView.findViewById(R.id.chatRecyclerView)
+
+        //Giuseppe
+        pressureView = mView.findViewById(R.id.textView5)
 
         sendButton.isClickable = false
         sendButton.isEnabled = false
@@ -123,9 +124,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
 
     //Giuseppe da mettere in ViewModel
     fun cambiaValore(stringa:String){
-        pressureView = pressureView ?: requireActivity().findViewById(R.id.textView5)
-        Log.d("verificaCambiaValore", "valore: $stringa")
-        pressureView?.text = stringa
+        pressureView.text = stringa
     }
 
 }

@@ -372,9 +372,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(mReceiver)
-
+        //giuseppe
+        mChatService?.stop()
+        mHandler.removeCallbacksAndMessages(null)
     }
-
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -421,6 +422,13 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         fun calcoloLunghezza(stringa: String): String{
             return stringa
         }
+
+        fun calcoloValoriPressione (stringa: String):String{
+            val payload = stringa.chunked(2)[4].toInt(16)
+            val convertito: String = (((payload*2)-330)/10).toString()
+            return convertito
+        }
+
         fun pulisciEdAggiungiStringa(stringa: String){
             //calcolo checkSum
             Log.d("calcolo", "stringa $stringa")
@@ -499,8 +507,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     }
 
                      if(readMessage.startsWith("f004")) {
-                        chatFragment.cambiaValore(readMessage)
+                         val valore = calcoloValoriPressione(readMessage)
+                        chatFragment.cambiaValore(valore)
                     }
+
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
                     chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
