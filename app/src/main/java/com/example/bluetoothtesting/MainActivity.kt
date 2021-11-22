@@ -443,7 +443,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             Log.d("calcolo","packetId: $packetId checksum: $checksum e stringa: $convertita e calcolo $calcoloChecksum ")
         }
 
-
         override fun handleMessage(msg: Message) {
 
             when (msg.what) {
