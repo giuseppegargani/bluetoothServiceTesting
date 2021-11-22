@@ -24,7 +24,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
 import android.R.string
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.util.Log
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import java.lang.IllegalStateException
 import kotlin.concurrent.thread
 
@@ -58,10 +63,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var connectionDot: ImageView
     private lateinit var  mConnectedDeviceName: String
     private var connected: Boolean = false
+    private lateinit var btImageView: ImageView
     @Volatile
     private var cambioDati = false
-    //private var lastMessage: String = ""
-    //@Volatile var readMessage: String = ""
+
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var chatFragment: ChatFragment
@@ -83,6 +88,9 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         headerLabelContainer = findViewById(R.id.headerLabelContainer)
         status = findViewById(R.id.status)
         connectionDot = findViewById(R.id.connectionDot)
+
+        //giuseppe bluetooth Icon
+        btImageView = findViewById(R.id.btImage)
 
         status.text = getString(R.string.bluetooth_not_enabled)
 
@@ -454,15 +462,16 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                         BluetoothChatService.STATE_CONNECTED -> {
 
                             status.text = getString(R.string.connected_to) + " "+ mConnectedDeviceName
+                            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_connected_24)
                             connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connected))
                             Snackbar.make(findViewById(R.id.mainScreen),"Connected to " + mConnectedDeviceName,Snackbar.LENGTH_SHORT).show()
-                            //mConversationArrayAdapter.clear()
                             connected = true
                         }
 
                         BluetoothChatService.STATE_CONNECTING -> {
                             status.text = getString(R.string.connecting)
                             connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connecting))
+                            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
                             connected = false
                         }
 
@@ -470,6 +479,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                             status.text = getString(R.string.not_connected)
                             connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_red))
                             Snackbar.make(findViewById(R.id.mainScreen),getString(R.string.not_connected),Snackbar.LENGTH_SHORT).show()
+                            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
                             connected = false
                         }
                     }
@@ -520,13 +530,16 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)!!
                     status.text = getString(R.string.connected_to) + " " +mConnectedDeviceName
                     connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connected))
+                    btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_connected_24)
                     Snackbar.make(findViewById(R.id.mainScreen),"Connected to " + mConnectedDeviceName,Snackbar.LENGTH_SHORT).show()
                     connected = true
                     showChatFragment()
+
                 }
                 Constants.MESSAGE_TOAST -> {
                     status.text = getString(R.string.not_connected)
                     connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_red))
+                    btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
                     Snackbar.make(findViewById(R.id.mainScreen),
                         msg.data.getString(Constants.TOAST)!!,Snackbar.LENGTH_SHORT).show()
                     connected = false
