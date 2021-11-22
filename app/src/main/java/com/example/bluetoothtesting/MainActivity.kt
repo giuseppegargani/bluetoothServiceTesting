@@ -134,15 +134,19 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
          */
         mChatService = BluetoothChatService(this, mHandler)
 
-        if (mBtAdapter == null)
+        if (mBtAdapter == null){
             showAlertAndExit()
+            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
+        }
         else {
 
             if (mBtAdapter?.isEnabled == false) {
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
             } else {
                 status.text = getString(R.string.not_connected)
+                btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
             }
 
             // Get a set of currently paired devices
@@ -225,6 +229,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         progressBar.visibility = View.VISIBLE
         headerLabel.text = getString(R.string.searching)
         mDeviceList.clear()
+        btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_searching_24)
 
         // If we're already discovering, stop it
         if (mBtAdapter?.isDiscovering ?: false)
@@ -273,6 +278,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_OK) {
             //Bluetooth is now connected.
             status.text = getString(R.string.not_connected)
+
+            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
 
             // Get a set of currently paired devices
             val pairedDevices = mBtAdapter?.bondedDevices
@@ -471,7 +478,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                         BluetoothChatService.STATE_CONNECTING -> {
                             status.text = getString(R.string.connecting)
                             connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connecting))
-                            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
+                            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_searching_24)
                             connected = false
                         }
 
@@ -479,7 +486,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                             status.text = getString(R.string.not_connected)
                             connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_red))
                             Snackbar.make(findViewById(R.id.mainScreen),getString(R.string.not_connected),Snackbar.LENGTH_SHORT).show()
-                            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
+                            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
                             connected = false
                         }
                     }
@@ -539,7 +546,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 Constants.MESSAGE_TOAST -> {
                     status.text = getString(R.string.not_connected)
                     connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_red))
-                    btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
+                    btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_searching_24)
                     Snackbar.make(findViewById(R.id.mainScreen),
                         msg.data.getString(Constants.TOAST)!!,Snackbar.LENGTH_SHORT).show()
                     connected = false
