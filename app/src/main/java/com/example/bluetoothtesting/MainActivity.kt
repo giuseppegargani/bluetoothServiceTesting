@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import android.util.Log
+import java.lang.ref.WeakReference
 
 /* created by Giuseppe Gargani
  */
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
 
     private var mChatService: BluetoothChatService? = null
-    private lateinit var chatFragment: ChatFragment
+    private lateinit var weakChatFragment: WeakReference<ChatFragment>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -492,7 +493,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     //Toast.makeText(this@MainActivity,"Me: $writeMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add("Me:  " + writeMessage)
                     val milliSecondsTime = System.currentTimeMillis()
-                    chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                    weakChatFragment.get()?.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
                 }
 
                 Constants.MESSAGE_READ -> {
@@ -517,12 +518,12 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
                      if(readMessage.startsWith("f004")) {
                          val valore = calcoloValoriPressione(readMessage)
-                        chatFragment.cambiaValore(valore)
+                        weakChatFragment.get()?.cambiaValore(valore)
                     }
 
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
-                    chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
+                    weakChatFragment.get()?.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
 
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
@@ -601,9 +602,9 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         if(!isFinishing) {
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
-            chatFragment = ChatFragment.newInstance()
-            chatFragment.setCommunicationListener(this)
-            fragmentTransaction.replace(R.id.mainScreen, chatFragment, "ChatFragment")
+            weakChatFragment= WeakReference<ChatFragment>(ChatFragment.newInstance())
+            weakChatFragment.get()?.setCommunicationListener(this)
+            fragmentTransaction.replace(R.id.mainScreen, weakChatFragment.get()!!, "ChatFragment")
             fragmentTransaction.addToBackStack("ChatFragment")
             fragmentTransaction.commit()
         }
