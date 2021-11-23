@@ -22,19 +22,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-
-import android.R.string
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.util.Log
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
-import androidx.core.widget.ImageViewCompat
-import java.lang.IllegalStateException
-import kotlin.concurrent.thread
 
 /* created by Giuseppe Gargani
-
  */
 
 /* RIGUARDO ALLA ARCHITETTURA GENERALE
@@ -60,7 +50,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var headerLabelPaired: TextView
     private lateinit var headerLabelContainer: LinearLayout
     private lateinit var status: TextView
-    private lateinit var connectionDot: ImageView
     private lateinit var  mConnectedDeviceName: String
     private var connected: Boolean = false
     private lateinit var btImageView: ImageView
@@ -87,7 +76,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         headerLabelPaired = findViewById(R.id.headerLabelPaired)
         headerLabelContainer = findViewById(R.id.headerLabelContainer)
         status = findViewById(R.id.status)
-        connectionDot = findViewById(R.id.connectionDot)
 
         //giuseppe bluetooth Icon
         btImageView = findViewById(R.id.btImage)
@@ -134,41 +122,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
          */
         mChatService = BluetoothChatService(this, mHandler)
 
-//        if (mBtAdapter == null){
-//            showAlertAndExit()
-//            btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
-//        }
-//        else {
-//
-//            if (mBtAdapter?.isEnabled == false) {
-//                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-//                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-//                btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
-//            } else {
-//                status.text = getString(R.string.not_connected)
-//                btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
-//            }
-//
-//            // Get a set of currently paired devices
-//            val pairedDevices = mBtAdapter?.bondedDevices
-//            val mPairedDeviceList = arrayListOf<DeviceData>()
-//
-//            // If there are paired devices, add each one to the ArrayAdapter
-//            if (pairedDevices?.size ?: 0 > 0) {
-//                // There are paired devices. Get the name and address of each paired device.
-//                for (device in pairedDevices!!) {
-//                    val deviceName = device.name
-//                    val deviceHardwareAddress = device.address // MAC address
-//                    mPairedDeviceList.add(DeviceData(deviceName,deviceHardwareAddress))
-//                }
-//
-//                val devicesAdapter = DevicesRecyclerViewAdapter(context = this, mDeviceList = mPairedDeviceList)
-//                recyclerViewPaired.adapter = devicesAdapter
-//                devicesAdapter.setItemClickListener(this)
-//                headerLabelPaired.visibility = View.VISIBLE
-//            }
-//        }
         checkActivation()
+
         //showChatFragment()
 
     }
@@ -392,7 +347,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         val device = mBtAdapter?.getRemoteDevice(deviceAddress)
 
         status.text = getString(R.string.connecting)
-        connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connecting))
 
         // Attempt to connect to the device
         mChatService?.connect(device, true)
@@ -457,6 +411,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private val mHandler = @SuppressLint("HandlerLeak")
     object : Handler() {
 
+        //elementi relativi al DB
         var listaMin = mutableListOf<String>("elementoLista")
         var listaMax = mutableListOf<String>()
 
@@ -466,21 +421,17 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
             return lista.toString(16)
         }
-
         fun converti (stringa:String): String {
             return stringa
         }
-
         fun calcoloLunghezza(stringa: String): String{
             return stringa
         }
-
         fun calcoloValoriPressione (stringa: String):String{
             val payload = stringa.chunked(2)[4].toInt(16)
             val convertito: String = (((payload*2)-330)/10).toString()
             return convertito
         }
-
         fun pulisciEdAggiungiStringa(stringa: String){
             //calcolo checkSum
             Log.d("calcolo", "stringa $stringa")
@@ -507,21 +458,18 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
                             status.text = getString(R.string.connected_to) + " "+ mConnectedDeviceName
                             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_connected_24)
-                            connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connected))
                             Snackbar.make(findViewById(R.id.mainScreen),"Connected to " + mConnectedDeviceName,Snackbar.LENGTH_SHORT).show()
                             connected = true
                         }
 
                         BluetoothChatService.STATE_CONNECTING -> {
                             status.text = getString(R.string.connecting)
-                            connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connecting))
                             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_searching_24)
                             connected = false
                         }
 
                         BluetoothChatService.STATE_LISTEN, BluetoothChatService.STATE_NONE -> {
                             status.text = getString(R.string.not_connected)
-                            connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_red))
                             Snackbar.make(findViewById(R.id.mainScreen),getString(R.string.not_connected),Snackbar.LENGTH_SHORT).show()
                             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
                             connected = false
@@ -573,7 +521,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)!!
                     status.text = getString(R.string.connected_to) + " " +mConnectedDeviceName
-                    connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_connected))
                     btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_connected_24)
                     Snackbar.make(findViewById(R.id.mainScreen),"Connected to " + mConnectedDeviceName,Snackbar.LENGTH_SHORT).show()
                     connected = true
@@ -582,7 +529,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 }
                 Constants.MESSAGE_TOAST -> {
                     status.text = getString(R.string.not_connected)
-                    connectionDot.setImageDrawable(getDrawable(R.drawable.ic_circle_red))
                     btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_searching_24)
                     Snackbar.make(findViewById(R.id.mainScreen),
                         msg.data.getString(Constants.TOAST)!!,Snackbar.LENGTH_SHORT).show()
@@ -667,41 +613,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         {supportFragmentManager.popBackStack()
         Toast.makeText(this, "tornato indietro", Toast.LENGTH_SHORT).show()
             if((mBtAdapter==null)||(mBtAdapter?.isEnabled == false)) checkActivation() //if accidentally turned off bluetooth
-        }
-    }
-
-    //UTILITIY
-    fun Int.toByteArray(isBigEndian: Boolean = true, size: Int = 0): ByteArray {
-        var bytes = byteArrayOf()
-        var arraySize = size
-        if (size == 0) {
-            arraySize = UInt.SIZE_BYTES
-        }
-
-        var n = this
-
-        if (n == 0x00) {
-            bytes += n.toByte()
-        } else {
-            while (n != 0x00) {
-                val b = n.toByte()
-
-                bytes += b
-
-                n = n.shr(Byte.SIZE_BITS)
-            }
-        }
-
-        val padding = 0x00u.toByte()
-        var paddings = byteArrayOf()
-        repeat(arraySize - bytes.count()) {
-            paddings += padding
-        }
-
-        return if (isBigEndian) {
-            paddings + bytes.reversedArray()
-        } else {
-            paddings + bytes
         }
     }
 
