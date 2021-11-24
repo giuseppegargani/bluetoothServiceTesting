@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
 
     private var mChatService: BluetoothChatService? = null
-    private lateinit var weakChatFragment: WeakReference<ChatFragment>
-    private lateinit var weakChartFragment: WeakReference<ChartFragment>
+    private var weakChatFragment: WeakReference<ChatFragment>? = null
+    private var weakChartFragment: WeakReference<ChartFragment>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -495,7 +495,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     //Toast.makeText(this@MainActivity,"Me: $writeMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add("Me:  " + writeMessage)
                     val milliSecondsTime = System.currentTimeMillis()
-                    weakChatFragment.get()?.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                    weakChatFragment?.get()?.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                    //weakChartFragment.get()?.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
                 }
 
                 Constants.MESSAGE_READ -> {
@@ -520,13 +521,14 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
                      if(readMessage.startsWith("f004")) {
                          val valore = calcoloValoriPressione(readMessage)
-                        weakChatFragment.get()?.cambiaValore(valore)
+                        weakChatFragment?.get()?.cambiaValore(valore)
+                         //weakChartFragment.get()?.cambiaValore(valore)
                     }
 
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
-                    weakChatFragment.get()?.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
-                    weakChartFragment.get()?.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
+                    weakChatFragment?.get()?.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
+                    weakChartFragment?.let{weakReference ->  weakReference.get()?.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))}
 
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
@@ -606,8 +608,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
             weakChatFragment= WeakReference<ChatFragment>(ChatFragment.newInstance())
-            weakChatFragment.get()?.setCommunicationListener(this)
-            fragmentTransaction.replace(R.id.mainScreen, weakChatFragment.get()!!, "ChatFragment")
+            weakChatFragment?.get()?.setCommunicationListener(this)
+            fragmentTransaction.replace(R.id.mainScreen, weakChatFragment?.get()!!, "ChatFragment")
             fragmentTransaction.addToBackStack("ChatFragment")
             fragmentTransaction.commit()
         }
@@ -619,8 +621,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
             weakChartFragment= WeakReference<ChartFragment>(ChartFragment.newInstance())
-            weakChartFragment.get()?.setCommunicationListener(this)
-            fragmentTransaction.replace(R.id.mainScreen, weakChartFragment.get()!!, "ChartFragment")
+            weakChartFragment?.get()?.setCommunicationListener(this)
+            fragmentTransaction.replace(R.id.mainScreen, weakChartFragment?.get()!!, "ChartFragment")
             fragmentTransaction.addToBackStack("ChartFragment")
             fragmentTransaction.commit()
         }
