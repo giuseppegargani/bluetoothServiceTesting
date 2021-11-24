@@ -7,10 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -40,6 +37,7 @@ class ChartFragment : Fragment(), View.OnClickListener {
     ): View? {
         // Inflate the layout for this fragment
         val mView: View = LayoutInflater.from(activity).inflate(R.layout.chart_fragment, container, false)
+
         initViews(mView)
         return mView
     }
@@ -55,7 +53,7 @@ class ChartFragment : Fragment(), View.OnClickListener {
         chartSendButton = mView.findViewById(R.id.chartSendButton)
         chartRecyclerviewChat = mView.findViewById(R.id.chartChatRecyclerView)
 
-        //Giuseppe
+            //Giuseppe
         chartPressureView = mView.findViewById(R.id.chartTextView5)
 
         chartSendButton.isClickable = false
