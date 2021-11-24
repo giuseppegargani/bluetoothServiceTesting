@@ -374,7 +374,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             }
         }
         if(connected)
-            showChatFragment()
+            showChartFragment()
     }
 
     override fun onDestroy() {
@@ -494,7 +494,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     //Toast.makeText(this@MainActivity,"Me: $writeMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add("Me:  " + writeMessage)
                     val milliSecondsTime = System.currentTimeMillis()
-                    weakChatFragment.get()?.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
+                    weakChartFragment.get()?.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
                 }
 
                 Constants.MESSAGE_READ -> {
@@ -519,12 +519,12 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
                      if(readMessage.startsWith("f004")) {
                          val valore = calcoloValoriPressione(readMessage)
-                        weakChatFragment.get()?.cambiaValore(valore)
+                        weakChartFragment.get()?.cambiaValore(valore)
                     }
 
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
-                    weakChatFragment.get()?.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
+                    weakChartFragment.get()?.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
 
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
@@ -534,7 +534,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_connected_24)
                     Snackbar.make(findViewById(R.id.mainScreen),"Connected to " + mConnectedDeviceName,Snackbar.LENGTH_SHORT).show()
                     connected = true
-                    showChatFragment()
+                    showChartFragment()
 
                 }
                 Constants.MESSAGE_TOAST -> {
@@ -598,7 +598,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
     }
 
-    private fun showChatFragment() {
+    /*private fun showChatFragment() {
 
         if(!isFinishing) {
             val fragmentManager = supportFragmentManager
@@ -609,7 +609,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             fragmentTransaction.addToBackStack("ChatFragment")
             fragmentTransaction.commit()
         }
-    }
+    }*/
 
     private fun showChartFragment() {
 

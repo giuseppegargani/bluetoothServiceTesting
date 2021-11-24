@@ -13,7 +13,6 @@
         android:clickable="true"
         android:focusable="true">
 
-        <!--android:id="@+id/textView5"-->
         <TextView
             android:id="@+id/chartTextView5"
             android:layout_width="wrap_content"
@@ -25,14 +24,14 @@
             android:text="numero"
             android:textSize="20sp" />
 
-        <!--android:id="@+id/chatLayoutContainer"-->
+
         <RelativeLayout
             android:id="@+id/chartChatLayoutContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
 
-            <!--android:id="@+id/messageLayout"-->
+
             <LinearLayout
                 android:id="@+id/chartMessageLayout"
                 android:layout_width="match_parent"
@@ -46,7 +45,7 @@
                 android:orientation="horizontal"
                 android:weightSum="5">
 
-                <!--android:id="@+id/chatInput"-->
+
                 <EditText
                     android:id="@+id/chartChatInput"
                     android:layout_width="0dp"
@@ -62,7 +61,7 @@
 
             </LinearLayout>
 
-            <!--android:id="@+id/sendButton"-->
+
             <FrameLayout
                 android:id="@+id/chartSendButton"
                 android:layout_width="54dp"
@@ -74,7 +73,7 @@
                 android:clickable="false"
                 android:focusable="false">
 
-                <!--android:id="@+id/sendIcon"-->
+
                 <ImageView
                     android:id="@+id/chartSendIcon"
                     android:layout_width="32dp"
@@ -86,9 +85,7 @@
 
         </RelativeLayout>
 
-        <!--android:id="@+id/chatRecyclerView"
-                    android:layout_above="@id/chatLayoutContainer"
-        -->
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chartChatRecyclerView"
             android:layout_width="match_parent"
@@ -98,7 +95,7 @@
             android:layout_marginTop="50dp"
             android:layout_marginBottom="16dp" />
 
-        <!--android:id="@+id/textView3"-->
+
         <TextView
             android:id="@+id/chartTextView3"
             android:layout_width="wrap_content"

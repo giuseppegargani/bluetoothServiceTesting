@@ -18,7 +18,7 @@ class ChartFragment : Fragment(), View.OnClickListener {
 
     private lateinit var chartChatInput: EditText
     private lateinit var chartSendButton: FrameLayout
-    private var communicationListener: ChartFragment.CommunicationListener? = null
+    private var communicationListener: CommunicationListener? = null
     private var chatAdapter: ChatAdapter? = null
     private lateinit var chartRecyclerviewChat: RecyclerView
     private val messageList = arrayListOf<Message>()
@@ -34,13 +34,14 @@ class ChartFragment : Fragment(), View.OnClickListener {
     }
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.chart_fragment, container, false)
+        val mView: View = LayoutInflater.from(activity).inflate(R.layout.chart_fragment, container, false)
+        initViews(mView)
+        return mView
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
