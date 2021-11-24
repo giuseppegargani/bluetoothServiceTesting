@@ -13,9 +13,8 @@
         android:clickable="true"
         android:focusable="true">
 
-
+<!--android:id="@+id/textView5"-->
         <TextView
-            android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -25,14 +24,14 @@
             android:text="numero"
             android:textSize="20sp" />
 
+<!--android:id="@+id/chatLayoutContainer"-->
         <RelativeLayout
-            android:id="@+id/chatLayoutContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
 
+            <!--android:id="@+id/messageLayout"-->
             <LinearLayout
-                android:id="@+id/messageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/message_height_min"
                 android:layout_gravity="bottom"
@@ -44,8 +43,8 @@
                 android:orientation="horizontal"
                 android:weightSum="5">
 
+                <!--android:id="@+id/chatInput"-->
                 <EditText
-                    android:id="@+id/chatInput"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="60dp"
@@ -59,8 +58,8 @@
 
             </LinearLayout>
 
+            <!--android:id="@+id/sendButton"-->
             <FrameLayout
-                android:id="@+id/sendButton"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
                 android:layout_alignParentEnd="true"
@@ -70,8 +69,8 @@
                 android:clickable="false"
                 android:focusable="false">
 
+                <!--android:id="@+id/sendIcon"-->
                 <ImageView
-                    android:id="@+id/sendIcon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
@@ -81,17 +80,18 @@
 
         </RelativeLayout>
 
+        <!--android:id="@+id/chatRecyclerView"
+                    android:layout_above="@id/chatLayoutContainer"
+        -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chatRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/chatLayoutContainer"
             android:layout_alignParentTop="true"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="16dp" />
 
+        <!--android:id="@+id/textView3"-->
         <TextView
-            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

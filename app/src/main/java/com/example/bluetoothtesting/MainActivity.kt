@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var weakChatFragment: WeakReference<ChatFragment>
+    private lateinit var weakChartFragment: WeakReference<ChartFragment>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -608,6 +609,18 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             fragmentTransaction.addToBackStack("ChatFragment")
             fragmentTransaction.commit()
         }
+    }
+
+    private fun showChartFragment() {
+
+            /*val fragmentManager = supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            weakChartFragment= WeakReference<ChartFragment>(ChartFragment.newInstance())
+            weakChartFragment.get()?.setCommunicationListener(this)
+            fragmentTransaction.replace(R.id.mainScreen, weakChatFragment.get()!!, "ChatFragment")
+            fragmentTransaction.addToBackStack("ChartFragment")
+            fragmentTransaction.commit()*/
+
     }
 
     override fun onCommunication(message: String) {
