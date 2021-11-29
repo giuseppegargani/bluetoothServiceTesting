@@ -505,11 +505,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     val readBuf = msg.obj as ByteArray
                     // construct a string from the valid bytes in the buffer
                     //val readMessage = String(readBuf, 0, msg.arg1)
-                    val readMessage = readBuf.toHex2().trimEnd('0')
 
+                    val readMessage = readBuf.take(msg.arg1).toByteArray().toHex2()
                     Log.d("dati","dati: readBuf: ${readBuf} message: $readMessage")
-
-                    val milliSecondsTime = System.currentTimeMillis()
+                    val milliSecondsTime = System.currentTimeMillis() //per confrontare tempo dell'ultimo pezzo
 
                     //pulisce e riempie variabile lista
                     if(readMessage.startsWith("f005")){
