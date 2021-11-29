@@ -436,8 +436,13 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             return stringa
         }
         fun calcoloValoriPressione (stringa: String):String{
-            val payload = stringa.chunked(2)[4].toInt(16)
-            val convertito: String = (((payload*2)-330)/10).toString()
+            val payload = stringa.chunked(2)
+            var convertito:String = "-"
+            //Solo dei pacchetti f4 che sono di dimensione 9 (altrimenti aspetta)?? oppure unisci pezzetti? non conviene forse
+            if(payload.size==9) {
+                val dato=payload[4].toInt(16)
+                convertito = (((dato * 2) - 330) / 10).toString()
+            }
             return convertito
         }
         fun pulisciEdAggiungiStringa(stringa: String){
