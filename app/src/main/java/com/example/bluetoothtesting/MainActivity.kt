@@ -439,9 +439,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             val payload = stringa.chunked(2)
             var convertito:String = "-"
             //Solo dei pacchetti f4 che sono di dimensione 9 (altrimenti aspetta)?? oppure unisci pezzetti? non conviene forse
-            if(payload.size==9) {
+            if(payload.size==8) {
                 val dato=payload[4].toInt(16)
-                convertito = (((dato * 2) - 330) / 10).toString()
+                //convertito = (((dato * 2) - 330) / 10).toString()
+                convertito = dato.toString()
             }
             return convertito
         }
@@ -520,7 +521,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                         Toast.makeText(this@MainActivity,listaMin.toString(),Toast.LENGTH_SHORT).show()
                     }
 
-                     if(readMessage.startsWith("f004")) {
+                     if(readMessage.startsWith("f001")) {
                          val valore = calcoloValoriPressione(readMessage)
                         chatFragment.cambiaValore(valore)
                     }
