@@ -370,6 +370,9 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 // Start the Bluetooth chat services
                 mChatService?.start()
             }
+            /*if(mChatService?.getState() == BluetoothChatService.STATE_CONNECTED){
+                mChatService?.write("f00100000001f1".decodeHex())
+            }*/
         }
         if(connected)
             showChatFragment()
@@ -393,6 +396,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         cosa fà,a cosa serve e come si testa
         Un Handler permette di restituire indietro al main thread (UI) un altro thread che lavora in background!!!!
         e' un concetto importante!!!
+
         pag.389 Libro di android in italiano!!!!!
         https://medium.com/@ankit.sinhal/handler-in-android-d138c1f4980e
         articolo interessante!!! ma c'è qualche tutorial da fare pratico
@@ -402,7 +406,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         ma quali sono i metodi principali di Handler per la gestione del thread?
         ma si possono mettere handler con fragment?
         sembra che gli handler siano legati a services, è così?
-        
+
      */
     /*Proviamo a mandare db quando riceve!! un comando
 
@@ -414,6 +418,14 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         //elementi relativi al DB
         var listaMin = mutableListOf<String>("elementoLista")
         var listaMax = mutableListOf<String>()
+        //stringa locale
+        var localString : String = ""
+        var finale: MutableList<String> = mutableListOf()
+        private val time = System.nanoTime() //tempo attuale 1_000_000 e' un secondo e monotonico
+        var ritardoAmmissibile: Long = 3_000_000_000   //impostabile!!!
+        var localList: MutableList<Pair<String, Long>> = mutableListOf<Pair<String, Long>>()   //lista di coppie di valori
+        var localPair: Pair<String,Long> = Pair<String,Long>("",0)
+        var listaTrovate = mutableListOf<String>()
 
         fun calcoloChecksum(stringa: String ): String {
             //fai una lista di due caratteri
@@ -458,6 +470,199 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             var calcoloChecksum: String = calcoloChecksum(payload.joinToString(""))
             val stringaUnita = payload.joinToString("")
             Log.d("calcolo","packetId: $packetId checksum: $checksum e stringa: $convertita e calcolo $calcoloChecksum ")
+        }
+        var trovateConvertite = mutableListOf<String>()
+
+        //si può anche aggiungere un timer
+        fun fixStrings(stringa: String): String{
+            //dividi in bytes
+            val lista = stringa.chunked(2)
+            //se inferiore alla lunghezza minima aggiungi subito e ritorna
+            if (lista.size<8){ localString += stringa; return "Stringa parziale da ricalcolare" }
+
+            var lunghezzaPayload = (lista[2]+lista[3]).toLong(16) //lunghezza dichiarata in bytes
+            //var checksum:String = lista[lista.size-3]+lista[lista.size-2]
+
+            //se la lunghezza stringa e' minore di quella dichiarata e presunta aggiungi e ritorna
+            while(lista.size>=lunghezzaPayload+7) {
+
+                Log.d("lunghezza", "inserita funzione")
+                //calcola checkSum e Payload
+                var packetId:String = lista[1]
+                var checkSum = lista[4+lunghezzaPayload.toInt()]+lista[5+lunghezzaPayload.toInt()]
+                var payload = lista.subList(4,4+lunghezzaPayload.toInt()).toMutableList()
+
+                //calcolo checksum dopo aver aggiunto packetID
+                payload.add(packetId)
+                var calcoloChecksum = payload.map { it.toInt(16) }.sumBy{it}.toString(16)
+                while(calcoloChecksum.length<4){calcoloChecksum = "0"+calcoloChecksum} //aggiungi zero in cima
+
+                //se Trova Regex aggiungi a finale altrimenti aggiungi a locale
+                val regexPacketId = "(01|02|03|04|05|06|07|08|09)"
+                var regexVerifica = """f0(04|01)${lunghezzaPayload}[a-z0-9]+f1"""
+                //val verificaLunghezza: Boolean = stringa.matches()
+                if (stringa.contains(regexVerifica.toRegex())){
+                    Log.d("lunghezza","trovata una corrispondenza }")
+                    stringa.replace(regexVerifica,"")
+                }
+
+                //Log.d("lunghezza", "valore lunghezza dicharata ${lunghezzaPayload} e effettiva ${lunghezzaPayloadEffettiva} ")
+                Log.d("lunghezza", "calcolo checksum ${checkSum} e effettivo ${calcoloChecksum}")
+
+                return stringa
+
+            }
+
+            localString += stringa;
+            return "Stringa parziale da ricalcolare con payload maggiore di 1"
+        }
+
+        fun aggiustaStringhe(stringa: String): List<String>{
+
+            //azzera la lista delle trovate
+            trovateConvertite = mutableListOf()
+            listaTrovate = mutableListOf()
+
+            //verifica tempo e eventualmente cancella dati locali
+            //var tempoAttuale: Long = System.nanoTime()
+            if ((System.nanoTime()-localPair.second)>ritardoAmmissibile){ localPair= Pair("", System.nanoTime())}
+            //else {localPair= Pair(localPair.first, localPair.second)}
+
+            /*//verifica i dati in localList ed elimina i dati vecchi
+            if (!localList.isEmpty()) { localList.filter { it.second<=ritardoAmmissibile }}
+
+            //dividi in bytes
+            val lista = stringa.chunked(2)
+            //se inferiore alla lunghezza minima aggiungi subito e ritorna
+            if (lista.size<8){ localList.add(Pair(stringa,System.nanoTime())) ; return "Stringa parziale da ricalcolare" }
+
+            //restituisci sottostringa che inizia per f0(packetID)
+            val valoriPacketId = "(01|02|03|04|05|06|07|08|09|0a|0b|0c|0d|0e|0f)"
+            val regexFiltroIniziale = "f0${valoriPacketId} [0-9a-z]+".toRegex()
+            val stringaLavoro = regexFiltroIniziale.find(stringa).toString()
+            //se stringa di lavoro minore di 8 lunghezza minima
+            if (stringaLavoro.length<16){localList.add(Pair(stringaLavoro,System.nanoTime())); return "Stringa parziale da ricalcolare" }
+
+            var lunghezzaPayload = (lista[2]+lista[3]).toLong(16) //lunghezza dichiarata in bytes
+            //var checksum:String = lista[lista.size-3]+lista[lista.size-2]
+
+            //se la lunghezza stringa e' minore di quella dichiarata e presunta aggiungi e ritorna
+            while(lista.size>=lunghezzaPayload+7) {
+
+                Log.d("lunghezza", "inserita funzione")
+                //calcola checkSum e Payload
+                var packetId:String = lista[1]
+                var checkSum = lista[4+lunghezzaPayload.toInt()]+lista[5+lunghezzaPayload.toInt()]
+                var payload = lista.subList(4,4+lunghezzaPayload.toInt()).toMutableList()
+
+                //calcolo checksum dopo aver aggiunto packetID
+                payload.add(packetId)
+                var calcoloChecksum = payload.map { it.toInt(16) }.sumBy{it}.toString(16)
+                while(calcoloChecksum.length<4){calcoloChecksum = "0"+calcoloChecksum} //aggiungi zero in cima
+
+                //se Trova Regex aggiungi a finale altrimenti aggiungi a locale
+                val regexPacketId = "(01|02|03|04|05|06|07|08|09)"
+                var regexVerifica = """f0(04|01)${lunghezzaPayload}[a-z0-9]+f1"""
+                //val verificaLunghezza: Boolean = stringa.matches()
+                if (stringa.contains(regexVerifica.toRegex())){
+                    Log.d("lunghezza","trovata una corrispondenza }")
+                    stringa.replace(regexVerifica,"")
+                }
+
+                //Log.d("lunghezza", "valore lunghezza dicharata ${lunghezzaPayload} e effettiva ${lunghezzaPayloadEffettiva} ")
+                Log.d("lunghezza", "calcolo checksum ${checkSum} e effettivo ${calcoloChecksum}")*/
+            var stringaCalcolo = ""
+            if (localPair.first!=""){ stringaCalcolo = localPair.first+stringa}
+            else{stringaCalcolo = stringa}
+            println("localFirst.primo ${localPair.first} stringa calcolo ${stringaCalcolo}")
+
+            //cerca sottostringa corrispondente che inizia per f0 e finisce per f1 e verifica che sia maggiore di un certo numero di caratteri
+            val valoriPacketId = "(01|02|03|04|05|06|07|08|09|0a|0b|0c|0d|0e|0f)"
+            val filtroIniziale = "f0${valoriPacketId}[0-9a-z]{10,}f1".toRegex()
+
+            //se contiene una stringa presunta valida come lunghezza e alcuni elementi iniziali adesso verifica lunghezza e checksum
+            while(stringaCalcolo.contains(filtroIniziale)) {
+                val workString = filtroIniziale.find(stringaCalcolo)!!.value //perche' abbiamo gia' controllato
+                println("TROVATA UNA CORRISPONDENZA ${workString} lunghezza payload ${(workString.substring(4,8).toInt(16)*2)+14}")
+                //proviamo findAll e filtriamo per lunghezza
+                //val listaRisultati = filtroIniziale.findAll(workString)//.filter { ((it.value.substring(4,8).toInt(16)*2)+14)==it.value.length }
+                //println("RICERCA ${listaRisultati.count()}")
+                val filtroSecondario = "f0${valoriPacketId}[0-9a-z]{10,}f1".toRegex().split(workString).filter { it.length >=14 }
+                val ricerca = "f0${valoriPacketId}[09a-z]{12,}".toRegex()
+                println("RICERCA  numero: ${ricerca} ")
+
+                val lista = workString.chunked(2)   //dividi in bytes hexa
+                var lunghezzaPayload = (lista[2]+lista[3]) //calcola lunghezza
+                var packetId:String = lista[1]  //packetID
+                var checkSum = lista[4+lunghezzaPayload.toInt(16)]+lista[5+lunghezzaPayload.toInt(16)] //checkSum dichiarato
+                var payload = lista.subList(4,4+lunghezzaPayload.toInt(16)).toMutableList() //payload
+
+                //calcolo checksum dopo aver aggiunto packetID
+                var payloadConPacketID = (mutableListOf(packetId)+payload).toMutableList() //(packetId)
+                var calcoloChecksum = payloadConPacketID.map { it.toInt(16) }.sumBy{it}.toString(16)
+                while(calcoloChecksum.length<4){calcoloChecksum = "0"+calcoloChecksum} //aggiungi zero in cima
+                //per DB sono le ultime quattro cifre
+                if (calcoloChecksum.length>4){calcoloChecksum = calcoloChecksum.takeLast(4)}
+
+                println("VALORI COMPOSIZIONE ${lunghezzaPayload.toInt(16)} checkSum ${checkSum} e calcolo ${calcoloChecksum}")
+                //verifica
+                val lunghezzaNumerica = lunghezzaPayload.toInt(16)
+                val filtroVerifica = "f0${packetId}${lunghezzaPayload}[0-9a-z]{${lunghezzaPayload.toInt(16)*2}}${calcoloChecksum}f1".toRegex()
+
+                if (workString.contains(filtroVerifica)){
+                    println("TROVATO!!!!!!!! ${filtroVerifica.find(workString)!!.value}")
+
+                    val convertita = convertiTrovate(payloadConPacketID.joinToString(""))
+                    println(" PAYLOAD: pay CONVERTITA: ${convertita}")
+                    trovateConvertite.add(convertita)
+                    listaTrovate.add(filtroVerifica.find(workString)!!.value)
+                    stringaCalcolo=stringaCalcolo.replace(filtroVerifica, "")
+                    continue
+                }
+                else {break}
+            }
+            localPair= Pair((stringaCalcolo),System.nanoTime())
+            return trovateConvertite
+        }
+        fun convertiTrovate(packetIDePayload: String): String{
+            val packetId:String = packetIDePayload[0].toString()+packetIDePayload[1]
+            val payload = packetIDePayload.substring(2)
+            //converti payloadConPacketID in stringa con valori
+            if (packetIDePayload.length<4) return "Stringa di Fine Invio DB"
+            when (packetId) {
+                "01"-> return "Livello di aspirazione impostato: ${payload.toInt(16)} cmH2O"
+                "02"-> return "Perdite aeree al minuto: ${payload.toInt(16)} ml/min"
+                "03"-> return "Perdite aeree medie in un'ora: ${payload.toInt(16)} ml/min/hour"
+                "04"-> return "Pressione intrapleurica istantanea: ${(((payload.substring(0,2).toInt(16))*2)-330)/10} x 0.1cmH2O, ${(((payload.substring(2,4).toInt(16))*2)-330)/10} x 0.1cmH2O, ${(((payload.substring(4).toInt(16))*2)-330)/10} x 0.1cmH2O"
+                "05"-> {
+                    var stringa = "Valori DB Pressione Intrapleurica Minima: "
+                    val lista = payload.chunked(2).map { stringa += "${((it.toInt(16)*2)-330)/10} x 0.1cmH2O/min, " }
+                    return stringa.dropLast(2)
+                }
+                "06"-> {
+                    var stringa = "Valori DB Pressione Intrapleurica Massima: "
+                    val lista = payload.chunked(2).map { stringa += "${((it.toInt(16)*2)-330)/10} x 0.1cmH2O, " }
+
+                    return stringa.dropLast(2)
+                }
+                "07"-> return "Perdita di liquidi contenitore attuale: ${payload.toInt(16)} ml"
+                "08"-> return "Perdita di liquidi totale: ${payload.toInt(16)} ml/24h"
+                "09"-> return "Ore calcolate: ${payload.toInt(16)} ore"
+                "0a"-> return "Stato di carica della batteria"
+                "0b"-> return "Modello di RedLine: ${payload.toInt(16)}"
+                "0c"-> return "Unita' di misura della pressione: ${payload.toInt(16)} cmH2O/kPa"
+                "0d"-> {
+                    var stringa = "Valori DB Livello di aspirazione liquidi: "
+                    val lista = payload.chunked(2).map { stringa += "${it.toInt(16)} cmH2O, " }
+                    return stringa.dropLast(2)}
+                "0e"->{
+                    var stringa = "Valori DB Livello di perdite aeree: "
+                    val lista = payload.chunked(2).map { stringa += "${it.toInt(16)} ml/min, " }
+                    return stringa.dropLast(2)
+                }
+                "0f"->return "Indicazione di fine invio DB"
+                else->return "Errore di conversione: packet Id non trovato o non inserito"
+            }
         }
 
         override fun handleMessage(msg: Message) {
@@ -510,24 +715,32 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     Log.d("dati","dati: readBuf: ${readBuf} message: $readMessage")
                     val milliSecondsTime = System.currentTimeMillis() //per confrontare tempo dell'ultimo pezzo
 
-                    //pulisce e riempie variabile lista
+                  /*  //pulisce e riempie variabile lista
                     if(readMessage.startsWith("f005")){
                         pulisciEdAggiungiStringa(readMessage)
                     }
-
                     //manda un messaggio Toast quando arriva a fineDB con checksum ed altro
                     if(readMessage.endsWith("f00f0000000ff1")){
                         Toast.makeText(this@MainActivity,listaMin.toString(),Toast.LENGTH_SHORT).show()
-                    }
-
-                     if(readMessage.startsWith("f001")) {
-                         val valore = calcoloValoriPressione(readMessage)
+                    }*/
+                    //f00100010f0010f1
+                    val regex = "f0010001[a-z0-9]{6}f1".toRegex()
+                     if(regex.containsMatchIn(readMessage)) {
+                         val valore = (regex.find(readMessage)!!.value).substring(8,10).toInt(16).toString()
+                         Log.d("Vacuum", "Trovato +  $valore")
                         chatFragment.cambiaValore(valore)
                     }
+                    //se comincia diverso da f0 unisci a stringa locale e calcola VERIFICA TEMPO COME COPPIA
+                    //if(!readMessage.startsWith("f0")){fixStrings(localString+readMessage)}
+                    //val finalmessage = fixStrings(readMessage)
+
+                    //da togliere il messaggio se non trovate
+                    val trovate = aggiustaStringhe(readMessage)
+                    if(trovate.isNotEmpty()) { val regex = "f001[a-z0-9]+".toRegex();trovate.forEach{chatFragment.communicate(com.example.bluetoothtesting.Message(it,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED)) } }
 
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
-                    chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
+                    //chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
 
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
@@ -568,19 +781,25 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         // Check that there's actually something to send
         if (message.isNotEmpty()) {
 
-            if(message==" "){
-                if(cambioDati) {
-                    var fakeSignal = "F0090001000009F1F0010001010002F1F002000201020005F1F003000200010004F1F0040003B7B7B70229F1F00700020097009EF1F008000200F90101F1F00B000100000BF1F00C000101000DF1"
+            if(message=="db pressione minima"){
+                    var fakeSignal = "f00500000005f1"
                     var packet: ByteArray = fakeSignal.decodeHex()
                     mChatService?.write(packet)
-                    cambioDati = false
-                }
-                else {
-                    val fakeSignal = "F0090001000009F1F0010001020003F1F002000201030006F1F003000200040007F1F0040003BEBEBE023EF1F00700020096009DF1F008000200F80100F1F00B000100000BF1F00C000101000DF1"
-                    val packet: ByteArray = fakeSignal.decodeHex()
+            }
+            if(message=="db pressione massima"){
+                    var fakeSignal = "f00600000006f1"
+                    var packet: ByteArray = fakeSignal.decodeHex()
                     mChatService?.write(packet)
-                    cambioDati = true
-                }
+            }
+            if(message=="db aspirazione liquidi"){
+                var fakeSignal = "f00d0000000df1"
+                var packet: ByteArray = fakeSignal.decodeHex()
+                mChatService?.write(packet)
+            }
+            if(message=="db perdite aeree"){
+                var fakeSignal = "f00e0000000ef1"
+                var packet: ByteArray = fakeSignal.decodeHex()
+                mChatService?.write(packet)
             }
 
             else{
@@ -624,7 +843,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             super.onBackPressed()
         else
         {supportFragmentManager.popBackStack()
-        Toast.makeText(this, "tornato indietro", Toast.LENGTH_SHORT).show()
             if((mBtAdapter==null)||(mBtAdapter?.isEnabled == false)) checkActivation() //if accidentally turned off bluetooth
         }
     }
