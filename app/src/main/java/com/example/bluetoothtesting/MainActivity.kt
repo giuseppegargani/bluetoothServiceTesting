@@ -370,12 +370,20 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 // Start the Bluetooth chat services
                 mChatService?.start()
             }
-            /*if(mChatService?.getState() == BluetoothChatService.STATE_CONNECTED){
+            if(mChatService?.getState() == BluetoothChatService.STATE_CONNECTED){
                 mChatService?.write("f00100000001f1".decodeHex())
-            }*/
+            }
         }
         if(connected)
             showChatFragment()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //SI DEVE RIMUOVERE ESPLICITAMENTE IL SOLO CHATFRAGMENT
+        if(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment"){
+            supportFragmentManager.popBackStack()
+        }
     }
 
     override fun onDestroy() {
