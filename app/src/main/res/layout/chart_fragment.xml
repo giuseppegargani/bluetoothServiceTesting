@@ -13,26 +13,27 @@
         android:clickable="true"
         android:focusable="true">
 
-
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/chartTextView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="21dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="210dp"
             android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/textView3"
             android:fontFamily="@font/galada"
             android:text="numero"
             android:textSize="20sp" />
 
+
         <RelativeLayout
-            android:id="@+id/chatLayoutContainer"
+            android:id="@+id/chartChatLayoutContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
 
+
             <LinearLayout
-                android:id="@+id/messageLayout"
+                android:id="@+id/chartMessageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/message_height_min"
                 android:layout_gravity="bottom"
@@ -44,8 +45,9 @@
                 android:orientation="horizontal"
                 android:weightSum="5">
 
+
                 <EditText
-                    android:id="@+id/chatInput"
+                    android:id="@+id/chartChatInput"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="60dp"
@@ -59,8 +61,9 @@
 
             </LinearLayout>
 
+
             <FrameLayout
-                android:id="@+id/sendButton"
+                android:id="@+id/chartSendButton"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
                 android:layout_alignParentEnd="true"
@@ -70,8 +73,9 @@
                 android:clickable="false"
                 android:focusable="false">
 
+
                 <ImageView
-                    android:id="@+id/sendIcon"
+                    android:id="@+id/chartSendIcon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
@@ -81,17 +85,19 @@
 
         </RelativeLayout>
 
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chatRecyclerView"
+            android:id="@+id/chartChatRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/chatLayoutContainer"
             android:layout_alignParentTop="true"
+            android:layout_above="@+id/chartChatLayoutContainer"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="16dp" />
 
+
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/chartTextView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -99,16 +105,8 @@
             android:layout_marginStart="40dp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/galada"
-            android:text="Valore aspirazione"
+            android:text="Valore Database"
             android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/chartButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:text="Chart" />
 
     </RelativeLayout>
 </layout>
