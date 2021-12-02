@@ -64,6 +64,12 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //Limite di un mese per la licenza di uso (verificato)
+        if(((System.currentTimeMillis()) -1638436289630)>2629800000) {
+            Toast.makeText(this, "La licenza di uso e' scaduta. Vi preghiamo di contattare il venditore", Toast.LENGTH_LONG).show()
+            return
+        }
+
         val toolbarTitle = findViewById<TextView>(R.id.toolbarTitle)
 
         val typeFace = Typeface.createFromAsset(assets, "fonts/product_sans.ttf")
@@ -120,7 +126,9 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         Inizializza il chatService con handler!!!
         Uno dei parametri di bluetoothChat Service è handler
          */
+
         mChatService = BluetoothChatService(this, mHandler)
+
 
         checkActivation()
 
@@ -370,21 +378,17 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 // Start the Bluetooth chat services
                 mChatService?.start()
             }
-            if(mChatService?.getState() == BluetoothChatService.STATE_CONNECTED){
-                mChatService?.write("f00100000001f1".decodeHex())
-            }
         }
-        if(connected)
+
+        if(connected){
+            if(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment"){
+                supportFragmentManager.popBackStack()
+            }
             showChatFragment()
+            mChatService?.write("f00100000001f1".decodeHex())
+        }
     }
 
-    override fun onPause() {
-        super.onPause()
-        //SI DEVE RIMUOVERE ESPLICITAMENTE IL SOLO CHATFRAGMENT
-        if(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment"){
-            supportFragmentManager.popBackStack()
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
