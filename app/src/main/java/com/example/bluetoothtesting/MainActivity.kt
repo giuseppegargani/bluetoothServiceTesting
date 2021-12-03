@@ -382,7 +382,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
 
         if(connected){
-            if(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment"){
+            if((supportFragmentManager.backStackEntryCount>0)&&(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment")){
                 supportFragmentManager.popBackStack()
             }
             showChatFragment()
