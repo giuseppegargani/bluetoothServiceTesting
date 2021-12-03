@@ -708,8 +708,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
                             connected = false
                             Log.d("giuseppe", "cambio di stato a ${mChatService?.getState()}")
-                            //if(mChatService!!.getState()==BluetoothChatService.STATE_LISTEN){connectDevice(mbtdevice!!) }
-                            //if(mChatService!!.getState()==BluetoothChatService.STATE_CONNECTED){connectDevice(mbtdevice!!) }
+                            if(mChatService!!.getState()==BluetoothChatService.STATE_LISTEN){connectDevice(mbtdevice!!) }
+                            if(mChatService!!.getState()==BluetoothChatService.STATE_CONNECTED){connectDevice(mbtdevice!!) }
 
                         }
                     }
