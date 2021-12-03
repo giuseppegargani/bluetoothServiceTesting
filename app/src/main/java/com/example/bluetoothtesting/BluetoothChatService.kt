@@ -260,7 +260,7 @@ class BluetoothChatService(context: Context, handler: Handler){
         // Send a failure message back to the Activity
         val msg = mHandler?.obtainMessage(Constants.MESSAGE_TOAST)
         val bundle = Bundle()
-        bundle.putString(Constants.TOAST, "Connection Failed")
+        bundle.putString(Constants.TOAST, "Tentativo di connessione eseguito")
         msg?.data = bundle
 
         Log.d("giuseppe", "Tentativo di connessione fallito!! invio message con ${msg?.data?.getString(Constants.TOAST)} e stato ${mState}")
