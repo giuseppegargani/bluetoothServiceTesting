@@ -1,5 +1,6 @@
 package com.example.bluetoothtesting
 
+import android.app.PendingIntent.getActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,14 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bluetoothtesting.databinding.ChatFragmentBinding
+import com.google.android.material.internal.ContextUtils.getActivity
 
 /**
  * Created by giuseppe gargani
@@ -46,6 +45,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val mView: View = LayoutInflater.from(activity).inflate(R.layout.chat_fragment, container, false)
+
         initViews(mView)
         return mView
     }
@@ -56,6 +56,13 @@ class ChatFragment : Fragment(), View.OnClickListener {
         val chatIcon: ImageView = mView.findViewById(R.id.sendIcon)
         sendButton = mView.findViewById(R.id.sendButton)
         recyclerviewChat = mView.findViewById(R.id.chatRecyclerView)
+
+        //chartButton
+        val mActivity = requireActivity() as MainActivity
+        val chartButton = mView.findViewById<Button>(R.id.chartButton)
+        chartButton.setOnClickListener {
+            mActivity.showChartFragment()
+        }
 
         //Giuseppe
         pressureView = mView.findViewById(R.id.textView5)
