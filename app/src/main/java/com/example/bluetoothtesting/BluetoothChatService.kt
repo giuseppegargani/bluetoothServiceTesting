@@ -22,7 +22,7 @@ class BluetoothChatService(context: Context, handler: Handler){
     // Member fields
     private var mAdapter: BluetoothAdapter? = null
     private var mHandler: Handler? = null
-    private var mSecureAcceptThread: AcceptThread? = null
+    //private var mSecureAcceptThread: AcceptThread? = null
     private var mInsecureAcceptThread: AcceptThread? = null
     private var mConnectThread: ConnectThread? = null
     private var mConnectedThread: ConnectedThread? = null
@@ -98,10 +98,10 @@ class BluetoothChatService(context: Context, handler: Handler){
         }
 
         // Start the thread to listen on a BluetoothServerSocket
-        if (mSecureAcceptThread == null) {
+        /*if (mSecureAcceptThread == null) {
             mSecureAcceptThread = AcceptThread(true)
             mSecureAcceptThread?.start()
-        }
+        }*/
         if (mInsecureAcceptThread == null) {
             mInsecureAcceptThread = AcceptThread(false)
             mInsecureAcceptThread?.start()
@@ -143,6 +143,8 @@ class BluetoothChatService(context: Context, handler: Handler){
 
         // Start the thread to connect with the given device
         mConnectThread = ConnectThread(device, secure)
+
+        Log.d("giuseppe", "numero Thread attivi ${mConnectThread!!.threadGroup?.activeCount()}} e nome ${mConnectThread!!.threadGroup.name}")
         mConnectThread?.start()
 
         // Update UI title
@@ -173,10 +175,10 @@ class BluetoothChatService(context: Context, handler: Handler){
         }
 
         // Cancel the accept thread because we only want to connect to one device
-        if (mSecureAcceptThread != null) {
+        /*if (mSecureAcceptThread != null) {
             mSecureAcceptThread?.cancel()
             mSecureAcceptThread = null
-        }
+        }*/
         if (mInsecureAcceptThread != null) {
             mInsecureAcceptThread?.cancel()
             mInsecureAcceptThread = null
@@ -217,10 +219,10 @@ class BluetoothChatService(context: Context, handler: Handler){
             mConnectedThread = null
         }
 
-        if (mSecureAcceptThread != null) {
+        /*if (mSecureAcceptThread != null) {
             mSecureAcceptThread?.cancel()
             mSecureAcceptThread = null
-        }
+        }*/
 
         if (mInsecureAcceptThread != null) {
             mInsecureAcceptThread?.cancel()
@@ -258,8 +260,11 @@ class BluetoothChatService(context: Context, handler: Handler){
         // Send a failure message back to the Activity
         val msg = mHandler?.obtainMessage(Constants.MESSAGE_TOAST)
         val bundle = Bundle()
-        bundle.putString(Constants.TOAST, "Trying to connect")
+        bundle.putString(Constants.TOAST, "Connection Failed")
         msg?.data = bundle
+
+        Log.d("giuseppe", "Tentativo di connessione fallito!! invio message con ${msg?.data?.getString(Constants.TOAST)} e stato ${mState}")
+
         if (msg != null) {
             mHandler?.sendMessage(msg)
         }
@@ -468,6 +473,7 @@ class BluetoothChatService(context: Context, handler: Handler){
             } catch (e: IOException) {
                 Log.e(TAG, "close() of connect $mSocketType socket failed", e)
             }
+            Log.d("giuseppe","socket chiuso per cancellazione connectThread: ${mmSocket?.isConnected}")
 
         }
     }
