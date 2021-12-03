@@ -22,7 +22,7 @@ class BluetoothChatService(context: Context, handler: Handler){
     // Member fields
     private var mAdapter: BluetoothAdapter? = null
     private var mHandler: Handler? = null
-    //private var mSecureAcceptThread: AcceptThread? = null
+    private var mSecureAcceptThread: AcceptThread? = null
     private var mInsecureAcceptThread: AcceptThread? = null
     private var mConnectThread: ConnectThread? = null
     private var mConnectedThread: ConnectedThread? = null
@@ -98,10 +98,10 @@ class BluetoothChatService(context: Context, handler: Handler){
         }
 
         // Start the thread to listen on a BluetoothServerSocket
-        /*if (mSecureAcceptThread == null) {
+        if (mSecureAcceptThread == null) {
             mSecureAcceptThread = AcceptThread(true)
             mSecureAcceptThread?.start()
-        }*/
+        }
         if (mInsecureAcceptThread == null) {
             mInsecureAcceptThread = AcceptThread(false)
             mInsecureAcceptThread?.start()
@@ -175,10 +175,10 @@ class BluetoothChatService(context: Context, handler: Handler){
         }
 
         // Cancel the accept thread because we only want to connect to one device
-        /*if (mSecureAcceptThread != null) {
+        if (mSecureAcceptThread != null) {
             mSecureAcceptThread?.cancel()
             mSecureAcceptThread = null
-        }*/
+        }
         if (mInsecureAcceptThread != null) {
             mInsecureAcceptThread?.cancel()
             mInsecureAcceptThread = null
@@ -219,10 +219,10 @@ class BluetoothChatService(context: Context, handler: Handler){
             mConnectedThread = null
         }
 
-        /*if (mSecureAcceptThread != null) {
+        if (mSecureAcceptThread != null) {
             mSecureAcceptThread?.cancel()
             mSecureAcceptThread = null
-        }*/
+        }
 
         if (mInsecureAcceptThread != null) {
             mInsecureAcceptThread?.cancel()
