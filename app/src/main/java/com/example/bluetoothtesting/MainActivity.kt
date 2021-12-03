@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var btImageView: ImageView
     @Volatile
     private var cambioDati = false
-
+    var mbtdevice: DeviceData? = null
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var chatFragment: ChatFragment
@@ -340,6 +340,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     //se un elemento di recyclerView viene cliccato lancia connectDevice
     override fun itemClicked(deviceData: DeviceData) {
         connectDevice(deviceData)
+        mbtdevice=deviceData
     }
 
     /*cancella discovery e lancia il servizio
@@ -771,6 +772,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     Snackbar.make(findViewById(R.id.mainScreen),
                         msg.data.getString(Constants.TOAST)!!,Snackbar.LENGTH_SHORT).show()
                     connected = false
+                    if(mChatService!!.getState()==BluetoothChatService.STATE_NONE){connectDevice(mbtdevice!!)}
                 }
             }
         }
