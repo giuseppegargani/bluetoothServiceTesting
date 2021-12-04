@@ -65,4 +65,9 @@ class ExampleInstrumentedTest {
         }
     }
 
+    @Test
+    fun Thread(){
+
+    }
+
 }

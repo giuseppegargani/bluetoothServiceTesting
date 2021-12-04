@@ -22,13 +22,13 @@ import com.example.bluetoothtesting.databinding.ChatFragmentBinding
 
 class ChatFragment : Fragment(), View.OnClickListener {
 
-    private lateinit var chatInput: EditText
-    private lateinit var sendButton: FrameLayout
-    private var communicationListener: CommunicationListener? = null
-    private var chatAdapter: ChatAdapter? = null
-    private lateinit var recyclerviewChat: RecyclerView
-    private val messageList = arrayListOf<Message>()
-    private lateinit var pressureView: TextView
+     lateinit var chatInput: EditText
+     lateinit var sendButton: FrameLayout
+     private var communicationListener: CommunicationListener? = null
+     var chatAdapter: ChatAdapter? = null
+     lateinit var recyclerviewChat: RecyclerView
+     val messageList = arrayListOf<Message>()
+     lateinit var pressureView: TextView
 
     companion object {
         fun newInstance(): ChatFragment {
@@ -50,7 +50,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
         return mView
     }
 
-    private fun initViews(mView: View) {
+     fun initViews(mView: View) {
 
         chatInput = mView.findViewById(R.id.chatInput)
         val chatIcon: ImageView = mView.findViewById(R.id.sendIcon)

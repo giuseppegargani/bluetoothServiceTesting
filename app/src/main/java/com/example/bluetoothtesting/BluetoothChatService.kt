@@ -20,25 +20,25 @@ import java.util.*
 class BluetoothChatService(context: Context, handler: Handler){
 
     // Member fields
-    private var mAdapter: BluetoothAdapter? = null
-    private var mHandler: Handler? = null
-    private var mSecureAcceptThread: AcceptThread? = null
-    private var mInsecureAcceptThread: AcceptThread? = null
-    private var mConnectThread: ConnectThread? = null
-    private var mConnectedThread: ConnectedThread? = null
-    private var mState: Int = 0
-    private var mNewState: Int = 0
+    var mAdapter: BluetoothAdapter? = null
+    var mHandler: Handler? = null
+    var mSecureAcceptThread: AcceptThread? = null
+    var mInsecureAcceptThread: AcceptThread? = null
+    var mConnectThread: ConnectThread? = null
+    var mConnectedThread: ConnectedThread? = null
+    var mState: Int = 0
+    var mNewState: Int = 0
 
-    private val  TAG: String = javaClass.simpleName
+     val  TAG: String = javaClass.simpleName
 
     // Unique UUID for this application
-    private val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-    private val MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+     val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+     val MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
 
     // Name for the SDP record when creating server socket
-    private val NAME_SECURE = "BluetoothChatSecure"
-    private val NAME_INSECURE = "BluetoothChatInsecure"
+     val NAME_SECURE = "BluetoothChatSecure"
+     val NAME_INSECURE = "BluetoothChatInsecure"
 
     // Constants that indicate the current connection state
     companion object {
@@ -254,7 +254,7 @@ class BluetoothChatService(context: Context, handler: Handler){
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
-    private fun connectionFailed() {
+     fun connectionFailed() {
         // Send a failure message back to the Activity
         val msg = mHandler?.obtainMessage(Constants.MESSAGE_TOAST)
         val bundle = Bundle()
@@ -275,7 +275,7 @@ class BluetoothChatService(context: Context, handler: Handler){
     /**
      * Indicate that the connection was lost and notify the UI Activity.
      */
-    private fun connectionLost() {
+     fun connectionLost() {
         // Send a failure message back to the Activity
         val msg = mHandler?.obtainMessage(Constants.MESSAGE_TOAST)
         val bundle = Bundle()
@@ -312,10 +312,10 @@ class BluetoothChatService(context: Context, handler: Handler){
         in run viene accettato il server socket
      */
 
-    private inner class AcceptThread(secure: Boolean) : Thread() {
+     inner class AcceptThread(secure: Boolean) : Thread() {
         // The local server socket
-        private val mmServerSocket: BluetoothServerSocket?
-        private val mSocketType: String
+         val mmServerSocket: BluetoothServerSocket?
+         val mSocketType: String
 
         init {
             var tmp: BluetoothServerSocket? = null
@@ -400,9 +400,9 @@ class BluetoothChatService(context: Context, handler: Handler){
      * with a device. It runs straight through; the connection either
      * succeeds or fails.
      */
-    private inner class ConnectThread(private val mmDevice: BluetoothDevice?, secure: Boolean) : Thread() {
-        private val mmSocket: BluetoothSocket?
-        private val mSocketType: String
+     inner class ConnectThread( val mmDevice: BluetoothDevice?, secure: Boolean) : Thread() {
+         val mmSocket: BluetoothSocket?
+         val mSocketType: String
 
         init {
             var tmp: BluetoothSocket? = null
@@ -476,10 +476,10 @@ class BluetoothChatService(context: Context, handler: Handler){
      * This thread runs during a connection with a remote device.
      * It handles all incoming and outgoing transmissions.
      */
-    private inner class ConnectedThread(private val mmSocket: BluetoothSocket?, socketType: String) : Thread() {
+     inner class ConnectedThread( val mmSocket: BluetoothSocket?, socketType: String) : Thread() {
 
-        private val mmInStream: InputStream?
-        private val mmOutStream: OutputStream?
+         val mmInStream: InputStream?
+         val mmOutStream: OutputStream?
 
         init {
             Log.d(TAG, "create ConnectedThread: " + socketType)

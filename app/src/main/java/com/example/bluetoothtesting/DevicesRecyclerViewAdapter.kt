@@ -15,7 +15,7 @@ class DevicesRecyclerViewAdapter(val mDeviceList: List<DeviceData>, val context:
     RecyclerView.Adapter<DevicesRecyclerViewAdapter.VH>() {
 
 
-    private var listener: ItemClickListener? = null
+     var listener: ItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(context).inflate(R.layout.recyclerview_single_item, parent, false)

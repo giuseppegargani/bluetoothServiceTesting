@@ -35,30 +35,30 @@ import android.util.Log
 class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickListener,
     ChatFragment.CommunicationListener {
 
-    private val REQUEST_ENABLE_BT = 123
-    private val TAG = javaClass.simpleName
-    private lateinit var progressBar: ProgressBar
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var recyclerViewPaired: RecyclerView
-    private val mDeviceList = arrayListOf<DeviceData>()
-    private lateinit var devicesAdapter: DevicesRecyclerViewAdapter
-    private var mBtAdapter: BluetoothAdapter? = null
-    private val PERMISSION_REQUEST_LOCATION = 123
-    private val PERMISSION_REQUEST_LOCATION_KEY = "PERMISSION_REQUEST_LOCATION"
-    private var alreadyAskedForPermission = false
-    private lateinit var headerLabel: TextView
-    private lateinit var headerLabelPaired: TextView
-    private lateinit var headerLabelContainer: LinearLayout
-    private lateinit var status: TextView
-    private lateinit var  mConnectedDeviceName: String
-    private var connected: Boolean = false
-    private lateinit var btImageView: ImageView
+     val REQUEST_ENABLE_BT = 123
+     val TAG = javaClass.simpleName
+     lateinit var progressBar: ProgressBar
+     lateinit var recyclerView: RecyclerView
+     lateinit var recyclerViewPaired: RecyclerView
+     val mDeviceList = arrayListOf<DeviceData>()
+     lateinit var devicesAdapter: DevicesRecyclerViewAdapter
+     var mBtAdapter: BluetoothAdapter? = null
+     val PERMISSION_REQUEST_LOCATION = 123
+     val PERMISSION_REQUEST_LOCATION_KEY = "PERMISSION_REQUEST_LOCATION"
+     var alreadyAskedForPermission = false
+     lateinit var headerLabel: TextView
+     lateinit var headerLabelPaired: TextView
+     lateinit var headerLabelContainer: LinearLayout
+     lateinit var status: TextView
+     lateinit var  mConnectedDeviceName: String
+     var connected: Boolean = false
+     lateinit var btImageView: ImageView
     @Volatile
-    private var cambioDati = false
+     var cambioDati = false
 
 
-    private var mChatService: BluetoothChatService? = null
-    private lateinit var chatFragment: ChatFragment
+     var mChatService: BluetoothChatService? = null
+     lateinit var chatFragment: ChatFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     }
 
-    private fun checkActivation() {
+     fun checkActivation() {
         if (mBtAdapter == null){
             showAlertAndExit()
             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_disabled_24)
@@ -173,14 +173,14 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
     }
 
-    private fun makeVisible() {
+     fun makeVisible() {
 
         val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
         startActivity(discoverableIntent)
     }
 
-    private fun checkPermissions() {
+     fun checkPermissions() {
 
         if (alreadyAskedForPermission) {
             // don't check again because the dialog is still open
@@ -210,7 +210,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
     }
 
-    private fun showAlertAndExit() {
+     fun showAlertAndExit() {
 
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.not_compatible))
@@ -219,11 +219,11 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
             .show()
     }
 
-    private fun findDevices() {
+     fun findDevices() {
         checkPermissions()
     }
 
-    private fun startDiscovery() {
+     fun startDiscovery() {
 
         headerLabelContainer.visibility = View.VISIBLE
         progressBar.visibility = View.VISIBLE
@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND.
-    private val mReceiver = object : BroadcastReceiver() {
+     val mReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
 
@@ -346,7 +346,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     Se clicchi lancia connectDevice con deviceData corrispondente!!
     LANCIA IL METODO CONNECT DI mChatService!!! con la device corrispondente!!! che prende come parametro!!!
      */
-    private fun connectDevice(deviceData: DeviceData) {
+     fun connectDevice(deviceData: DeviceData) {
 
         // Cancel discovery because it's costly and we're about to connect
         mBtAdapter?.cancelDiscovery()
@@ -424,7 +424,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
      */
 
-    private val mHandler = @SuppressLint("HandlerLeak")
+     val mHandler = @SuppressLint("HandlerLeak")
     object : Handler() {
 
         //elementi relativi al DB
@@ -433,7 +433,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         //stringa locale
         var localString : String = ""
         var finale: MutableList<String> = mutableListOf()
-        private val time = System.nanoTime() //tempo attuale 1_000_000 e' un secondo e monotonico
+         val time = System.nanoTime() //tempo attuale 1_000_000 e' un secondo e monotonico
         var ritardoAmmissibile: Long = 3_000_000_000   //impostabile!!!
         var localList: MutableList<Pair<String, Long>> = mutableListOf<Pair<String, Long>>()   //lista di coppie di valori
         var localPair: Pair<String,Long> = Pair<String,Long>("",0)
@@ -782,7 +782,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     SE IL MESSAGGIO NON E' VUOTO, LANCIA IL METODO WRITE DI MCHATSERVICE
 
  */
-    private fun sendMessage(message: String) {
+     fun sendMessage(message: String) {
 
         // Check that we're actually connected before trying anything
         if (mChatService?.getState() != BluetoothChatService.STATE_CONNECTED) {
@@ -832,7 +832,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
     }
 
-    private fun showChatFragment() {
+     fun showChatFragment() {
 
         if(!isFinishing) {
             val fragmentManager = supportFragmentManager
