@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private lateinit var btImageView: ImageView
     @Volatile
     private var cambioDati = false
-    var mbtdevice: DeviceData? = null
+
 
     private var mChatService: BluetoothChatService? = null
     private lateinit var chatFragment: ChatFragment
@@ -340,7 +340,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     //se un elemento di recyclerView viene cliccato lancia connectDevice
     override fun itemClicked(deviceData: DeviceData) {
         connectDevice(deviceData)
-        mbtdevice=deviceData
     }
 
     /*cancella discovery e lancia il servizio
@@ -382,7 +381,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
 
         if(connected){
-            if((supportFragmentManager.backStackEntryCount>0)&&(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment")){
+            if(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment"){
                 supportFragmentManager.popBackStack()
             }
             showChatFragment()
@@ -698,8 +697,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                             status.text = getString(R.string.connecting)
                             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_searching_24)
                             connected = false
-                            Log.d("giuseppe", "messaggio: ${msg?.data}")
-
                         }
 
                         BluetoothChatService.STATE_LISTEN, BluetoothChatService.STATE_NONE -> {
@@ -707,10 +704,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                             Snackbar.make(findViewById(R.id.mainScreen),getString(R.string.not_connected),Snackbar.LENGTH_SHORT).show()
                             btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_24)
                             connected = false
-                            Log.d("giuseppe", "cambio di stato a ${mChatService?.getState()}")
-                            if(mChatService!!.getState()==BluetoothChatService.STATE_LISTEN){connectDevice(mbtdevice!!) }
-                            if(mChatService!!.getState()==BluetoothChatService.STATE_CONNECTED){connectDevice(mbtdevice!!) }
-
                         }
                     }
                 }
@@ -723,8 +716,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     //mConversationArrayAdapter.add("Me:  " + writeMessage)
                     val milliSecondsTime = System.currentTimeMillis()
                     chatFragment.communicate(com.example.bluetoothtesting.Message(writeMessage,milliSecondsTime,Constants.MESSAGE_TYPE_SENT))
-                    Log.d("giuseppe", "messaggio: ${msg?.data}")
-
                 }
 
                 Constants.MESSAGE_READ -> {
@@ -762,7 +753,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     //Toast.makeText(this@MainActivity,"$mConnectedDeviceName : $readMessage",Toast.LENGTH_SHORT).show()
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage)
                     //chatFragment.communicate(com.example.bluetoothtesting.Message(readMessage,milliSecondsTime,Constants.MESSAGE_TYPE_RECEIVED))
-                    Log.d("giuseppe", "messaggio: ${msg?.data}")
 
                 }
                 Constants.MESSAGE_DEVICE_NAME -> {
@@ -772,13 +762,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     btImageView.setBackgroundResource(R.drawable.ic_baseline_bluetooth_connected_24)
                     Snackbar.make(findViewById(R.id.mainScreen),"Connected to " + mConnectedDeviceName,Snackbar.LENGTH_SHORT).show()
                     connected = true
-                    Log.d("giuseppe", "messaggio: ${msg?.data}")
-
-                    //se si riconnette rimanda il nome nella barra UI e si deve eliminare chatFragment dal backstack se già dentro
-                    if((supportFragmentManager.backStackEntryCount>0)&&(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment")){
-                        supportFragmentManager.popBackStack()
-                    }
                     showChatFragment()
+
                 }
                 Constants.MESSAGE_TOAST -> {
                     status.text = getString(R.string.not_connected)
@@ -786,14 +771,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                     Snackbar.make(findViewById(R.id.mainScreen),
                         msg.data.getString(Constants.TOAST)!!,Snackbar.LENGTH_SHORT).show()
                     connected = false
-                    //giuseppe
-                    if(mChatService!!.getState()==BluetoothChatService.STATE_NONE){
-                        connectDevice(mbtdevice!!) }
-                    //if(mChatService!!.getState()==BluetoothChatService.STATE_CONNECTED){connectDevice(mbtdevice!!) }
-                    if(mChatService!!.getState()==BluetoothChatService.STATE_LISTEN){
-                        connectDevice(mbtdevice!!) }
-                    Log.d("giuseppe", "MESSAGE_TOAST messaggio: ${msg.data.getString(Constants.TOAST)!!} e state: ${mChatService!!.getState()}")
-
                 }
             }
         }
@@ -879,8 +856,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         else
         {supportFragmentManager.popBackStack()
             if((mBtAdapter==null)||(mBtAdapter?.isEnabled == false)) checkActivation() //if accidentally turned off bluetooth
-            //Toast.makeText(this,"indietro! stato: ${mChatService!!.getState()} device: ${mbtdevice?.deviceName ?: "null"}", Toast.LENGTH_SHORT).show()
-            //if(mChatService!!.getState()==BluetoothChatService.STATE_LISTEN){connectDevice(mbtdevice!!) }
         }
     }
 

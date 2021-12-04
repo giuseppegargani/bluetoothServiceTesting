@@ -143,8 +143,6 @@ class BluetoothChatService(context: Context, handler: Handler){
 
         // Start the thread to connect with the given device
         mConnectThread = ConnectThread(device, secure)
-
-        Log.d("giuseppe", "numero Thread attivi ${mConnectThread!!.threadGroup?.activeCount()}} e nome ${mConnectThread!!.threadGroup.name}")
         mConnectThread?.start()
 
         // Update UI title
@@ -260,11 +258,8 @@ class BluetoothChatService(context: Context, handler: Handler){
         // Send a failure message back to the Activity
         val msg = mHandler?.obtainMessage(Constants.MESSAGE_TOAST)
         val bundle = Bundle()
-        bundle.putString(Constants.TOAST, "Tentativo di connessione eseguito")
+        bundle.putString(Constants.TOAST, "Trying to connect")
         msg?.data = bundle
-
-        Log.d("giuseppe", "Tentativo di connessione fallito!! invio message con ${msg?.data?.getString(Constants.TOAST)} e stato ${mState}")
-
         if (msg != null) {
             mHandler?.sendMessage(msg)
         }
@@ -473,7 +468,6 @@ class BluetoothChatService(context: Context, handler: Handler){
             } catch (e: IOException) {
                 Log.e(TAG, "close() of connect $mSocketType socket failed", e)
             }
-            Log.d("giuseppe","socket chiuso per cancellazione connectThread: ${mmSocket?.isConnected}")
 
         }
     }

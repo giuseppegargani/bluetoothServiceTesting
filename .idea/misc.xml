@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothServiceTesting/app/src/main/res/layout/activity_main.xml" value="0.13020833333333334" />
+        <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothServiceTesting/app/src/main/res/layout/chat_fragment.xml" value="0.24230072463768115" />
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/drawable/dashed_background.xml" value="0.2703125" />
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/drawable/ic_baseline_bluetooth_connected_24.xml" value="0.2708333333333333" />
         <entry key="..\:/Users/giuse/AndroidStudioProjects/bluetoothTesting/app/src/main/res/drawable/ic_baseline_bluetooth_disabled_24.xml" value="0.2708333333333333" />
