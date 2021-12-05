@@ -812,6 +812,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
                 var fakeSignal = "f00e0000000ef1"
                 var packet: ByteArray = fakeSignal.decodeHex()
                 mChatService?.write(packet)
+
             }
 
             else{
