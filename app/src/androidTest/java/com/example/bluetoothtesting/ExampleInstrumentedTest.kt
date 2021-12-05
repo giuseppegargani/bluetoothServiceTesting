@@ -37,7 +37,7 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun connessioneRealDevice(){
+    fun cnnectionReadDevice(){
         //onView(withId(R.id.chatFragment)).check(matches(not(isDisplayed())))
         onView(withText("RPE-00002")).check(matches(isDisplayed()))
         onView(withText("RPE-00002")).perform(click())
@@ -47,18 +47,18 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun riconnessioneAltraDeviceTreVolteTreSecontiTempo(){
+    fun reconnectionSixTimesBefore3SEC(){
         //onView(withId(R.id.chatFragment)).check(matches(not(isDisplayed())))
         for(i in 1..3) {
             onView(withText("RPE-00002")).check(matches(isDisplayed()))
             onView(withText("RPE-00002")).perform(click())
-            Thread.sleep(3000)
+            Thread.sleep(3500)
             onView(withText("Valore aspirazione")).check(matches(isDisplayed()))
             onView(withId(R.id.chatFragment)).check(matches(isDisplayed()))
             Espresso.pressBack() //solo se in RootActivity
             onView(withText("RPE-00010")).check(matches(isDisplayed()))
             onView(withText("RPE-00010")).perform(click())
-            Thread.sleep(3000)
+            Thread.sleep(3500)
             onView(withText("Valore aspirazione")).check(matches(isDisplayed()))
             onView(withId(R.id.chatFragment)).check(matches(isDisplayed()))
             Espresso.pressBack()
