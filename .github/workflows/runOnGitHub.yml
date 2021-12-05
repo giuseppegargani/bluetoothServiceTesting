@@ -7,7 +7,7 @@ name: runOnGitHub
 # events but only for the master branch
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, Ricontrollato ]
   pull_request:
     branches: [ master, main ]
 jobs:
