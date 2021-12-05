@@ -22,7 +22,14 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 tasks.register("runOnGitHub") { // 1
-    dependsOn(":app:lint", ":app/src/test/java/com/example/bluetoothtesting/ExampleUnitTest")  // 2 ==> CUSTOMIZE THIS LINE app/src/test/java/com/example/bluetoothtesting/ExampleUnitTest.kt
+    //dependsOn(":app:lint", ":app:hello" /*"C:\\Users\\giuse\\AndroidStudioProjects\\bluetoothServiceTesting\\app\\src\\androidTest\\java\\com\\example\\bluetoothtesting\\ExampleInstrumentedTest.kt"*/)  // 2 ==> CUSTOMIZE THIS LINE app/src/test/java/com/example/bluetoothtesting/ExampleUnitTest.kt
+    dependsOn(":app:test")
     group = "custom"      // 3
     description = '$ ./gradlew runOnGitHub # runs on GitHub Action' //3
+}
+//prova di azione locale
+task hello {
+    doLast {
+        println 'Ciao Giuseppe'
+    }
 }

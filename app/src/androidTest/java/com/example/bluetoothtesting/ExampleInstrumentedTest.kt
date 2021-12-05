@@ -35,7 +35,7 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.example.bluetoothtesting", appContext.packageName)
     }
-
+/*
     @Test
     fun cnnectionReadDevice(){
         //onView(withId(R.id.chatFragment)).check(matches(not(isDisplayed())))
@@ -64,7 +64,7 @@ class ExampleInstrumentedTest {
             Espresso.pressBack()
         }
     }
-
+*/
     /*@Test
     fun Thread(){
 
