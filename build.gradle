@@ -21,3 +21,8 @@ buildscript {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+tasks.register("runOnGitHub") { // 1
+    dependsOn(":app:lint", ":app/src/test/java/com/example/bluetoothtesting/ExampleUnitTest")  // 2 ==> CUSTOMIZE THIS LINE app/src/test/java/com/example/bluetoothtesting/ExampleUnitTest.kt
+    group = "custom"      // 3
+    description = '$ ./gradlew runOnGitHub # runs on GitHub Action' //3
+}

@@ -65,9 +65,9 @@ class ExampleInstrumentedTest {
         }
     }
 
-    @Test
+    /*@Test
     fun Thread(){
 
-    }
+    }*/
 
 }
