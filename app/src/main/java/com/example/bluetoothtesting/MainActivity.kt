@@ -24,12 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import android.util.Log
 
-/* created by Giuseppe Gargani
- */
-
-/* RIGUARDO ALLA ARCHITETTURA GENERALE
-    in onCreate si inizializza il service bluechatService con mHandler
-    chatService è iniziata a null (all'inizio del programma)
+/* created by Giuseppe Gargani based on official documentation google android
  */
 
 class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickListener,
@@ -54,7 +49,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     private var connected: Boolean = false
     private lateinit var btImageView: ImageView
     @Volatile
-    private var cambioDati = false
     var mbtdevice: DeviceData? = null
 
     private var mChatService: BluetoothChatService? = null
@@ -123,7 +117,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         mBtAdapter = BluetoothAdapter.getDefaultAdapter()
 
         /* Initialize the BluetoothChatService to perform bluetooth connections
-        Inizializza il chatService con handler!!!
+        Inizializza il chatService con handler per eseguire connessioni bluetooth
         Uno dei parametri di bluetoothChat Service è handler
          */
 
@@ -136,6 +130,7 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
     }
 
+    //controlla attivazione bluetooth
     private fun checkActivation() {
         if (mBtAdapter == null){
             showAlertAndExit()
@@ -357,6 +352,8 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
 
         status.text = getString(R.string.connecting)
 
+        mChatService?.start()
+
         // Attempt to connect to the device
         mChatService?.connect(device, true)
 
@@ -382,9 +379,6 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
         }
 
         if(connected){
-            if(supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount-1).name=="ChatFragment"){
-                supportFragmentManager.popBackStack()
-            }
             showChatFragment()
             mChatService?.write("f00100000001f1".decodeHex())
         }
@@ -849,6 +843,10 @@ class MainActivity : AppCompatActivity(), DevicesRecyclerViewAdapter.ItemClickLi
     }
 
     private fun showChatFragment() {
+
+        if((supportFragmentManager.backStackEntryCount>0)&&(supportFragmentManager.getBackStackEntryAt((supportFragmentManager.backStackEntryCount)-1).name=="ChatFragment")){
+            supportFragmentManager.popBackStack()
+        }
 
         if(!isFinishing) {
             val fragmentManager = supportFragmentManager
